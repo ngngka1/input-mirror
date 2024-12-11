@@ -16,14 +16,18 @@ public class Sender {
 
         try (Socket socket = new Socket(serverAddress, port);
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+            String prevPos = "";
+            KeyListener.init(out);
             while (true) {
-                System.out.println("CursorPositionRetriever.get(): " + CursorPositionRetriever.get());
-                out.println(CursorPositionRetriever.get());
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                String pos = CursorPositionRetriever.get();
+                if (!prevPos.equals(pos))
+                    out.println(pos);
+                prevPos = pos;
+//                try {
+//                    Thread.sleep(10);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
             }
 
         } catch (IOException e) {

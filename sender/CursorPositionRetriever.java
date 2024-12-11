@@ -3,8 +3,8 @@ package sender;
 import java.awt.*;
 
 public class CursorPositionRetriever {
-    private static final double targetWidth = 1920.0;
-    private static final double targetHeight = 1080.0;
+    private static final double targetWidth = 1280.0;
+    private static final double targetHeight = 720.0;
     private static final double screenWidth;
     private static final double screenHeight;
     static {
