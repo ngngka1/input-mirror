@@ -29,7 +29,6 @@ public class Receiver {
                 ) {
                     while (true) {
                         String data = in.readLine();
-                        System.out.println(data);
                         if (data != null) {
                             Controller.redirect(parseData(data));
                         }
