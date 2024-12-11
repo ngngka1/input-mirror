@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 
 public class Application {
-    private static String ipAddress = "";
+    private static String ipAddress = "192.168.0.116";
     private static int port = 443;
     private static final boolean dev = true;
     public static void main(String[] args) {
