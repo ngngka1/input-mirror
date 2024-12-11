@@ -7,12 +7,8 @@ import java.util.Map;
 
 public class KeyboardController {
     private static Robot robot;
-    static {
-        try {
-            robot = new Robot();
-        } catch (AWTException e) {
-            e.printStackTrace();
-        }
+    public static void init(Robot robot) {
+        KeyboardController.robot = robot;
     }
     private static final Map<String, Integer> keyMap = new HashMap<>();
 

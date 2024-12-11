@@ -22,19 +22,21 @@ public class Receiver {
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Listening for mouse data on port " + port);
-
-            while (true) {
-                try (Socket clientSocket = serverSocket.accept();
-                     BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
-
-                    String data = in.readLine();
-                    if (data != null) {
-                        Controller.redirect(parseData(data));
+            Controller.init();
+                try (
+                        Socket clientSocket = serverSocket.accept();
+                        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+                ) {
+                    while (true) {
+                        String data = in.readLine();
+                        System.out.println(data);
+                        if (data != null) {
+                            Controller.redirect(parseData(data));
+                        }
                     }
                 } catch (IOException e) {
                     System.err.println("Error while processing client connection: " + e.getMessage());
                 }
-            }
         } catch (IOException e) {
             System.err.println("Could not listen on port " + port + ": " + e.getMessage());
         }
