@@ -1,5 +1,5 @@
 package receiver;
-import java.awt.AWTException;
+
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -15,7 +15,6 @@ public class KeyboardController {
 
     static {
         keyMap.put("A", KeyEvent.VK_A);
-//        keyMap.put("`", KeyEvent.VK_F6);
         keyMap.put("B", KeyEvent.VK_B);
         keyMap.put("C", KeyEvent.VK_C);
         keyMap.put("D", KeyEvent.VK_D);

@@ -2,20 +2,23 @@ package sender;
 
 import java.awt.*;
 
-public class CursorPositionRetriever {
-    private static final double targetWidth = 1280.0;
-    private static final double targetHeight = 720.0;
-    private static final double screenWidth;
-    private static final double screenHeight;
-    static {
+public class CursorListener {
+    private final double targetWidth;
+    private final double targetHeight;
+    private final double screenWidth;
+    private final double screenHeight;
+    CursorListener(double targetWidth, double targetHeight) {
+        this.targetWidth = targetWidth;
+        this.targetHeight = targetHeight;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         screenWidth = screenSize.getWidth();
         screenHeight = screenSize.getHeight();
     }
-    public static String get() {
+
+    public int[] getPos() {
         Point mousePosition = MouseInfo.getPointerInfo().getLocation();
         int normalizedX = (int)(mousePosition.getX() / screenWidth * targetWidth);
         int normalizedY = (int) (mousePosition.getY() / screenHeight * targetHeight);
-        return normalizedX + "|" + normalizedY;
+        return new int[] {normalizedX, normalizedY};
     }
 }

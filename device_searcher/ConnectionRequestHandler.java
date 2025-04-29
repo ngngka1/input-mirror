@@ -1,0 +1,64 @@
+package device_searcher;
+
+import types.BackgroundTask;
+import types.Device;
+import types.DeviceConnection;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.*;
+
+public class ConnectionRequestHandler extends BackgroundTask {
+    private static ConnectionRequestHandler runningInstance = null;
+    private final static List<DeviceConnection> connectionRequestQueue = new ArrayList<>();
+
+    private final int tcpPort;
+
+    public static List<DeviceConnection> getConnectionRequests() {
+        return connectionRequestQueue;
+    }
+    public static void clearClosedRequests() {
+        synchronized (connectionRequestQueue) {
+            for (int i = 0; i < connectionRequestQueue.size(); i++) {
+                if (connectionRequestQueue.get(i).clientSocket.isClosed()) {
+                    connectionRequestQueue.remove(i);
+                    i--;
+                }
+            }
+        }
+    }
+
+    public static void init(int tcpPort) {
+        if (runningInstance == null) {
+            runningInstance = new ConnectionRequestHandler(tcpPort);
+            new Thread(runningInstance).start();
+        } else {
+            System.out.println("There can only be at most one running ConnectionRequestHandler");
+        }
+    }
+
+    public ConnectionRequestHandler(int tcpPort) {
+        this.tcpPort = tcpPort;
+    }
+
+    @Override
+    public void run() {
+        try (ServerSocket serverSocket = new ServerSocket(this.tcpPort)) {
+            while (!isTerminated()) {
+                if (isPaused()) {continue;}
+                Socket clientSocket = serverSocket.accept();
+                InetAddress clientAddress = clientSocket.getInetAddress();
+                synchronized (connectionRequestQueue) {
+//                    clearClosedRequests();
+                    connectionRequestQueue.add(new DeviceConnection(clientSocket, new Device(clientAddress.getHostName(), clientAddress, clientSocket.getPort())));
+                }
+            }
+        }
+        catch (IOException e) {
+            System.err.println(e);
+        }
+
+    }
+}

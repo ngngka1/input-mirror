@@ -1,0 +1,77 @@
+package device_searcher;
+
+import types.BackgroundTask;
+
+import java.io.*;
+import java.net.*;
+
+
+// listens to UDP broadcasts from other active local devices, which then provides them with ip information about this device
+public class BroadcastHandler extends BackgroundTask {
+    private static BroadcastHandler runningInstance = null;
+
+    private final int udpPort; // which port this device can accept TCP connection
+    private final int tcpPort; // which port this device can accept TCP connection
+    private final String broadcastMessage;
+    private final String deviceInfoPrefix;
+
+    public static void init(int udpPort, int tcpPort, String broadcastMessage, String deviceInfoPrefix) {
+        if (runningInstance == null) {
+            runningInstance = new BroadcastHandler(udpPort, tcpPort, broadcastMessage, deviceInfoPrefix);
+            new Thread(runningInstance).start();
+        } else {
+            System.out.println("There can only be at most one running BroadcastHandler");
+        }
+    }
+
+    public BroadcastHandler(int udpPort, int tcpPort, String broadcastMessage, String deviceInfoPrefix)
+    {
+        this.udpPort = udpPort;
+        this.tcpPort = tcpPort;
+        this.broadcastMessage = broadcastMessage;
+        this.deviceInfoPrefix = deviceInfoPrefix;
+    }
+
+    public void respond(DatagramSocket socket, InetAddress address)
+    {
+        try {
+            String deviceInfoBuilder = deviceInfoPrefix +
+                    ":" +
+                    InetAddress.getLocalHost().getHostName() +
+                    ":" +
+                    InetAddress.getLocalHost().getHostAddress() +
+                    ":" +
+                    tcpPort;
+
+            byte[] sendData = (deviceInfoBuilder).getBytes();
+
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, address, socket.getPort());
+            socket.send(sendPacket);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void run() {
+        try {
+            DatagramSocket socket = new DatagramSocket(udpPort);
+            byte[] receiveData = new byte[1024];
+
+            while (!isTerminated()) {
+                if (isPaused()) {continue;}
+                DatagramPacket receivedPacket = new DatagramPacket(receiveData, receiveData.length);
+
+                socket.receive(receivedPacket);
+                String message = new String(receivedPacket.getData(), 0, receivedPacket.getLength());
+                if (message.equals(broadcastMessage)) {
+                    InetAddress receivedFrom = receivedPacket.getAddress();
+                    System.out.println("Received a connection request from: " + receivedFrom); // for debug
+                    respond(socket, receivedFrom);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
