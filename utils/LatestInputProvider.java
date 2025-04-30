@@ -20,7 +20,9 @@ public class LatestInputProvider extends BackgroundTask {
         latestLine = x;
     }
     public String readLatestLine() {
-        return latestLine;
+        String temp = latestLine;
+        latestLine = null;
+        return temp;
     }
 
     @Override

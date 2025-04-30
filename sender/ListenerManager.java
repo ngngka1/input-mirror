@@ -3,7 +3,7 @@ package sender;
 import com.github.kwhat.jnativehook.GlobalScreen;
 
 public class ListenerManager {
-    private static final long POLLING_RATE = 500; // Polling rate in hz
+    private static final long POLLING_RATE = 1000; // Polling rate in hz
     private static final long POLLING_INTERVAL = 1_000_000_000 / POLLING_RATE; // how many nanoseconds for one poll
     private static long lastPollTime;
 
@@ -41,8 +41,8 @@ public class ListenerManager {
 
         long elapsedTimeNs = System.nanoTime() - lastPollTime; // in ns
         long sleepTimeNs = (POLLING_INTERVAL - elapsedTimeNs) / 1_000_000; // in ns
-        System.out.println("elapsedTimeNs: " + elapsedTimeNs);
-        System.out.println("sleepTimeMs: " + sleepTimeNs);
+//        System.out.println("elapsedTimeNs: " + elapsedTimeNs);
+//        System.out.println("sleepTimeMs: " + sleepTimeNs);
         try {
             if (sleepTimeNs > 0)
                 Thread.sleep(sleepTimeNs / 1_000_000, (int) sleepTimeNs);
