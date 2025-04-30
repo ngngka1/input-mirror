@@ -104,8 +104,10 @@ public class Application {
                         }
                         clearOutput();
                         Socket clientSocket = connectionController.connect(devices.get(index));
-                        SenderController sender = new SenderController();
-                        sender.start(clientSocket);
+                        if (clientSocket != null) {
+                            SenderController sender = new SenderController();
+                            sender.start(clientSocket);
+                        }
                         break;
                     }
                     break;
@@ -140,8 +142,10 @@ public class Application {
 
                         clearOutput();
                         Socket clientSocket = connectionController.acceptConnection(devices.get(index));
-                        ReceiverController receiver = new ReceiverController();
-                        receiver.start(clientSocket);
+                        if (clientSocket != null) {
+                            ReceiverController receiver = new ReceiverController();
+                            receiver.start(clientSocket);
+                        }
                         break;
                     }
                     break;
@@ -153,6 +157,10 @@ public class Application {
                     BroadcastHandler.terminate();
                     ConnectionRequestHandler.terminate();
                     CloseableInterrupter.closeAll();
+                    break;
+                }
+                default: {
+                    System.out.println("Invalid option!");
                     break;
                 }
             }

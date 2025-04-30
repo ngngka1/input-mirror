@@ -22,7 +22,7 @@ public class ReceiverController {
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
             ControllerManager.init();
-            out.write("ACK"); // tells sender that the socket is now ok
+            out.write("ACK"); // tells sender that the receiver is now ready
             out.write("config:"+ screenWidth + ',' + screenHeight);
 
             while (!(InputProvider.getNonBlockingInput().equals("n"))) {

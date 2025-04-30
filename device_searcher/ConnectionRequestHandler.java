@@ -10,10 +10,8 @@ import java.net.*;
 import java.util.*;
 
 public class ConnectionRequestHandler extends BackgroundTask {
-    private static ConnectionRequestHandler runningInstance = null;
+//    private static ConnectionRequestHandler runningInstance = null;
     private final static List<DeviceConnection> connectionRequestQueue = new ArrayList<>();
-
-    private final int tcpPort;
 
     public static List<DeviceConnection> getConnectionRequests() {
         return connectionRequestQueue;
@@ -30,25 +28,12 @@ public class ConnectionRequestHandler extends BackgroundTask {
     }
 
     public static void init(int tcpPort) {
-        if (runningInstance == null) {
-            runningInstance = new ConnectionRequestHandler(tcpPort);
-            new Thread(runningInstance).start();
-        } else {
-            System.out.println("There can only be at most one running ConnectionRequestHandler");
-        }
-    }
-
-    public ConnectionRequestHandler(int tcpPort) {
-        this.tcpPort = tcpPort;
-    }
-
-    public void socketInterrupter() {
-
+        new Thread(new ConnectionRequestHandler()).start();
     }
 
     @Override
     public void run() {
-        try (ServerSocket serverSocket = new ServerSocket(this.tcpPort)) {
+        try (ServerSocket serverSocket = new ServerSocket()) {
             CloseableInterrupter.hook(serverSocket);
             while (!isTerminated()) {
                 if (isPaused()) {continue;}
@@ -58,7 +43,6 @@ public class ConnectionRequestHandler extends BackgroundTask {
                 } catch (SocketException e) {
                     break;
                 }
-//                clientSocket.setSoTimeout(3000);
                 InetAddress clientAddress = clientSocket.getInetAddress();
                 synchronized (connectionRequestQueue) {
 //                    clearClosedRequests();

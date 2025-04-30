@@ -7,6 +7,7 @@ import types.DeviceConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -39,19 +40,27 @@ public class ConnectionController {
 
     // for sender, initiate connection
     public Socket connect(Device targetDevice) {
-        try (Socket clientSocket = new Socket(targetDevice.getAddress(), targetDevice.getTcpPort())) {
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            System.out.println("Waiting for the target device to accept the connection...");
-            clientSocket.setSoTimeout(5000); // wait for 5 seconds before timing out
-            if (!(in.readLine().equals("ACK"))) {
-                System.out.println("Target device declined the connection.");
+        Socket clientSocket = null;
+        try {
+            try {
+                clientSocket = new Socket(targetDevice.getAddress(), targetDevice.getTcpPort());
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                System.out.println("Waiting for the target device to accept the connection...");
+                clientSocket.setSoTimeout(5 * 1000); // wait for 60 seconds before timing out
+                if (!(in.readLine().equals("SYNACK"))) {
+                    System.out.println("Target device declined the connection.");
+                    return null;
+                }
+                return clientSocket;
+            } catch (SocketTimeoutException e) {
+                System.out.println("connection to target device timed out.");
+                if (clientSocket != null)
+                    clientSocket.close();
                 return null;
             }
-            return clientSocket;
-        } catch (SocketTimeoutException e) {
-            System.out.println("connection to target device timed out.");
-            return null;
-        } catch (IOException e) {
+        }
+         catch (IOException e) {
+            System.out.println("Target device has already closed the connection.");
             return null;
         }
     }
@@ -71,9 +80,12 @@ public class ConnectionController {
                 System.out.println("available socket of this device not found");
                 return null;
             }
-            if (clientSocket.isClosed()) {
-                System.out.println("the connection to the device has already closed.");
-                return null;
+            try {
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                out.println("SYNACK");
+            } catch (IOException e) {
+                System.out.println("Failed to reach target device, the connection has already been closed by the other device");
+                return null; // Connection likely closed
             }
             return clientSocket;
         }

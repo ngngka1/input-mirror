@@ -37,8 +37,13 @@ public class DeviceSearcher {
                 String deviceInfo = new String(receivePacket.getData(), 0, receivePacket.getLength());
                 if (deviceInfo.startsWith(deviceInfoPrefix)) {
                     try {
-                        devices.add(new Device(deviceInfo));
-                        System.out.println((devices.size() - 1) + ". " + deviceInfo);
+                        Device device = new Device(deviceInfo);
+                        int i = devices.size() - 1;
+                        devices.add(device);
+//                        if (i == 0) {
+//                            System.out.println();
+//                        }
+                        System.out.println(i + ". " + device.getHostname() + "(IP=" + device.getAddress() +")");
                     } catch (UnknownHostException e) {
                         System.out.println("Unknown host: " + deviceInfo);
                     } catch (NumberFormatException e) {
