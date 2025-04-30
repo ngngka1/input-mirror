@@ -10,7 +10,7 @@ import java.util.Queue;
 // This class takes a buffered reader and continuously retrieves the latest data (Dirty, no synchronization)
 public class LatestInputProvider extends BackgroundTask {
     private static final int MAXIMUM_DELAY_ALLOWED = 5; // if the input queue has more than 5 unprocessed element, will start to skip input
-
+                                                        // delay can be calculated as = MAX_DELAY / (polling rate) = ~10 ms (for 500hz polling rate)
     private BufferedReader in;
     private volatile String latestLine;
     private volatile Queue<String> inputQueue;
@@ -32,6 +32,7 @@ public class LatestInputProvider extends BackgroundTask {
             int count = (int) (Math.log(inputQueue.size()) / Math.log(2));
             while (i < count) {
                 inputQueue.poll();
+                i++;
             }
         }
 //        latestLine = null;

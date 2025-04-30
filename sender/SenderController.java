@@ -40,7 +40,7 @@ public class SenderController {
             while (!(InputProvider.getNonBlockingInput().equals("n"))) {
                 String poll = ListenerManager.poll();
                 if (!prevPoll.equals(poll)) {
-                    System.out.println(poll); // for debug
+//                    System.out.println(poll); // for debug
                     out.println(poll);
                     prevPoll = poll;
                 }
