@@ -59,10 +59,14 @@ public class KeyboardController {
             return;
         }
         String[] parsedData = keyboardData.split("[,]");
+        System.out.println("keyboard data in receiver: " + keyboardData);
         try {
             for (String x : parsedData) {
                 int key = Integer.parseInt(x);
                 String keyText = NativeKeyEvent.getKeyText(Math.abs(key));
+                // note: this implementation is buggy, imagine if only the keyPress event is read in the receiver,
+                // the key will be pressed down forever, which is why i am still thinking about an effective way
+                // to pass keyboard data to receiver
                 if (keyMap.containsKey(keyText)){
                     int awtKeyEvent = keyMap.get(keyText);
                     if (key >= 0) {
@@ -70,6 +74,8 @@ public class KeyboardController {
                     } else {
                         robot.keyRelease(awtKeyEvent);
                     }
+                } else {
+                    System.out.println("No key '" + keyText + "' for awt key event"); // for debug
                 }
             }
         } catch (NumberFormatException e) {
