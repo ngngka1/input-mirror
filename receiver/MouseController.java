@@ -16,6 +16,20 @@ public class MouseController {
         robot.mouseMove(x, y);
     }
 
+    public static void control(String mouseData) {
+        if (mouseData.isEmpty()) {
+            return;
+        }
+        String[] parsedData = mouseData.split("[:]");
+        String[] posArgs = parsedData[0].split("[,]");
+        int mbMask = Integer.parseInt(parsedData[1]);
+        int scrollRotations = Integer.parseInt(parsedData[2]);
+
+        MouseController.moveTo(Integer.parseInt(posArgs[0]), Integer.parseInt(posArgs[1]));
+        MouseController.controlMouseButtons(mbMask);
+        MouseController.scrollMouseByRotations(scrollRotations);
+    }
+
     public static void controlMouseButtons(int mbMask) {
         int changeMask = prevMbMask ^ mbMask;
         int i = 0;

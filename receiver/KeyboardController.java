@@ -1,9 +1,13 @@
 package receiver;
 
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class KeyboardController {
@@ -48,32 +52,28 @@ public class KeyboardController {
         keyMap.put("TAB", KeyEvent.VK_TAB);
         keyMap.put("BACKSPACE", KeyEvent.VK_BACK_SPACE);
     }
-    public static void pressHotkey(String keyCombination) {
-        String[] keys = keyCombination.split("[+]");
 
-        int[] keyEvents = new int[keys.length];
-        int i = 0;
-        for (String key : keys) {
-            key = key.toUpperCase();
-            if (!keyMap.containsKey(key)) {
-                if (key.equals("MB1")) {
-                    try {
-                        robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-                        Thread.sleep(100);
-                        robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                    } catch (InterruptedException e) {}
 
-                }
-                else
-                    System.out.println("No such key: " + key);
-                return;
-            } else {
-                keyEvents[i] = keyMap.get(key);
-                robot.keyPress(keyEvents[i++]);
-            }
+    public static void control(String keyboardData) {
+        if (keyboardData.isEmpty()) {
+            return;
         }
-        for (int keyEvent : keyEvents) {
-            robot.keyRelease(keyEvent);
+        String[] parsedData = keyboardData.split("[,]");
+        try {
+            for (String x : parsedData) {
+                int key = Integer.parseInt(x);
+                String keyText = NativeKeyEvent.getKeyText(Math.abs(key));
+                if (keyMap.containsKey(keyText)){
+                    int awtKeyEvent = keyMap.get(keyText);
+                    if (key >= 0) {
+                        robot.keyPress(awtKeyEvent);
+                    } else {
+                        robot.keyRelease(awtKeyEvent);
+                    }
+                }
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Error in keyboard data, all entries should be integers");
         }
     }
 }

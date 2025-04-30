@@ -1,5 +1,6 @@
 package sender;
 
+import utils.HotkeyManager;
 import utils.InputProvider;
 
 import java.io.BufferedReader;
@@ -9,6 +10,19 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class SenderController {
+    // allows toggling between three modes, where inputs are
+    // received in both devices/receiver device/sender device
+//    private final List<String> toggleHotkey;
+
+
+
+    public SenderController() {
+    }
+
+    //    public void setHotkey(String hotkeyAction, List<Integer> HotkeyCodes) {
+//        // wip
+//    }
+
     public void start(Socket clientSocket) {
         try {
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -23,7 +37,8 @@ public class SenderController {
                 targetDimension[0] = Double.parseDouble(dimensionResponse[0]);
                 targetDimension[1] = Double.parseDouble(dimensionResponse[1]);
             } catch (NumberFormatException e) {
-
+                System.err.println("config from receiver contains error: screen dimension should be decimal numbers (width,height)");
+                return;
             }
             System.out.println("received config data from target device");
 
@@ -33,20 +48,23 @@ public class SenderController {
             KeyboardListener keyboardListener = new KeyboardListener();
             CursorListener cursorListener = new CursorListener(targetDimension[0], targetDimension[1]);
 
-            ListenerManager.init(mouseButtonListener, mouseScrollListener, keyboardListener, cursorListener);
+            ListenerManager listenerManager = new ListenerManager(mouseButtonListener, mouseScrollListener, keyboardListener, cursorListener);
+            HotkeyManager.hook(listenerManager);
 
             System.out.println();
             System.out.println("Start sending inputs to target device");
-            while (!(InputProvider.getNonBlockingInput().equals("n"))) {
-                String poll = ListenerManager.poll();
+            while (!clientSocket.isClosed() && !(InputProvider.getNonBlockingInput().equals("n"))) {
+                String poll = listenerManager.poll();
                 if (!prevPoll.equals(poll)) {
-//                    System.out.println(poll); // for debug
+                    System.out.println(poll); // for debug
                     out.println(poll);
                     prevPoll = poll;
                 }
             }
-            out.println("END");
-            clientSocket.close();
+            if (!clientSocket.isClosed()) {
+                out.println("END");
+                clientSocket.close();
+            }
         } catch (IOException e) {
             System.out.println();
             System.out.println("Connection terminated.");
