@@ -32,7 +32,8 @@ public class ReceiverController {
             }
             clientSocket.close();
         } catch (IOException e) {
-            System.err.println(e);
+            System.out.println();
+            System.out.println("Connection terminated.");
         }
     }
 }

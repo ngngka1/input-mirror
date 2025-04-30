@@ -47,7 +47,8 @@ public class SenderController {
             }
             clientSocket.close();
         } catch (IOException e) {
-
+            System.out.println();
+            System.out.println("Connection terminated.");
         }
     }
 }
