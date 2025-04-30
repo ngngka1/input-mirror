@@ -25,11 +25,11 @@ public class ReceiverController {
             ControllerManager.init();
             out.println("config:"+ screenWidth + ',' + screenHeight);
 
-            LatestInputProvider dirtyReader = new LatestInputProvider(in);
-            new Thread(dirtyReader).start();
+            LatestInputProvider lossyReader = new LatestInputProvider(in);
+            new Thread(lossyReader).start();
 
             while (!clientSocket.isClosed() && !(InputProvider.getNonBlockingInput().equals("n"))) {
-                String data = dirtyReader.readLatestLine();
+                String data = lossyReader.readLatestLine();
                 if (data == null) {continue;}
                 if (data.startsWith("d:")) {
                     ControllerManager.redirect(data.substring(2));
