@@ -1,6 +1,7 @@
 package receiver;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
 
 public class MouseController {
 //    private static final instance;
@@ -28,11 +29,10 @@ public class MouseController {
     }
 
     public static void flipKeyAction(int i) {
-        if ((prevMbMask >> i & 1) == 0) {
-            robot.mousePress(i);
+        if (((prevMbMask >> i) & 1) == 0) {
+            robot.mousePress(InputEvent.getMaskForButton(i));
         } else {
-            robot.mouseRelease(i);
-
+            robot.mouseRelease(InputEvent.getMaskForButton(i));
         }
     }
 

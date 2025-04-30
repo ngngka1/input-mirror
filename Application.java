@@ -64,105 +64,110 @@ public class Application {
 
 
         while (running) {
-            prompt();
-            String input = InputProvider.getInput().trim().toLowerCase();
-            int option;
-            clearOutput();
             try {
-                option = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Please input a number!");
-                continue;
-            }
 
-            switch (option) {
-                case 0: {
-                    while (true) {
-                        List<Device> devices = searchForDevices(UDP_PORT);
-                        System.out.println();
-                        if (devices.isEmpty()) {
-                            System.out.println("No active local devices found. (input 'r' to search again, 'n' to quit searching)");
-                        } else {
-                            System.out.println("would you like to connect to any of these devices? (if yes, input their index (e.g. '3'), if no, input 'r' to search again, or 'n' to quit searching.)");
-                        }
-                        input = InputProvider.getInput().trim().toLowerCase();
-                        if (input.equals("r")) {
-                            clearOutput();
-                            continue;
-                        }
+                prompt();
+                String input = InputProvider.getInput().trim().toLowerCase();
+                int option;
+                clearOutput();
+                try {
+                    option = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    System.out.println("Please input a number!");
+                    continue;
+                }
 
-                        int index;
-                        try {
-                            index = Integer.parseInt(input);
-                        } catch (NumberFormatException e) {
+                switch (option) {
+                    case 0: {
+                        while (true) {
+                            List<Device> devices = searchForDevices(UDP_PORT);
+                            System.out.println();
+                            if (devices.isEmpty()) {
+                                System.out.println("No active local devices found. (input 'r' to search again, 'n' to quit searching)");
+                            } else {
+                                System.out.println("would you like to connect to any of these devices? (if yes, input their index (e.g. '3'), if no, input 'r' to search again, or 'n' to quit searching.)");
+                            }
+                            input = InputProvider.getInput().trim().toLowerCase();
+                            if (input.equals("r")) {
+                                clearOutput();
+                                continue;
+                            }
+
+                            int index;
+                            try {
+                                index = Integer.parseInt(input);
+                            } catch (NumberFormatException e) {
+                                break;
+                            }
+
+                            if (index < 0 || index >= devices.size()) {
+                                System.out.println("Invalid index!");
+                                break;
+                            }
+    //                        clearOutput();
+                            Socket clientSocket = connectionController.connect(devices.get(index));
+                            if (clientSocket != null) {
+                                SenderController sender = new SenderController();
+                                sender.start(clientSocket);
+                            }
                             break;
-                        }
-
-                        if (index < 0 || index >= devices.size()) {
-                            System.out.println("Invalid index!");
-                            break;
-                        }
-//                        clearOutput();
-                        Socket clientSocket = connectionController.connect(devices.get(index));
-                        if (clientSocket != null) {
-                            SenderController sender = new SenderController();
-                            sender.start(clientSocket);
                         }
                         break;
                     }
-                    break;
-                }
-                case 1: {
-                    while (true) {
-                        ConnectionRequestHandler.clearClosedRequests();
-                        List<Device> devices = connectionController.getRequestedDevices();
-                        if (devices.isEmpty()) {
-                            System.out.println("No requests yet (input 'r' to reload, or 'n' to return)");
-                        } else {
-                            System.out.println("would you like to accept any of these connections? (if yes, input their index (e.g. '3'), if no, input 'r' to reload, or 'n' to return.");
-                        }
+                    case 1: {
+                        while (true) {
+                            ConnectionRequestHandler.clearClosedRequests();
+                            List<Device> devices = connectionController.getRequestedDevices();
+                            if (devices.isEmpty()) {
+                                System.out.println("No requests yet (input 'r' to reload, or 'n' to return)");
+                            } else {
+                                System.out.println("would you like to accept any of these connections? (if yes, input their index (e.g. '3'), if no, input 'r' to reload, or 'n' to return.");
+                            }
 
-                        input = InputProvider.getInput().trim().toLowerCase();
-                        if (input.equals("r")) {
+                            input = InputProvider.getInput().trim().toLowerCase();
+                            if (input.equals("r")) {
+                                clearOutput();
+                                continue;
+                            }
+
+                            int index;
+                            try {
+                                index = Integer.parseInt(input);
+                            } catch (NumberFormatException e) {
+                                break;
+                            }
+
+                            if (index < 0 || index >= devices.size()) {
+                                System.out.println("Invalid index!");
+                                break;
+                            }
+
                             clearOutput();
-                            continue;
-                        }
-
-                        int index;
-                        try {
-                            index = Integer.parseInt(input);
-                        } catch (NumberFormatException e) {
+                            Socket clientSocket = connectionController.acceptConnection(devices.get(index));
+                            if (clientSocket != null) {
+                                ReceiverController receiver = new ReceiverController();
+                                receiver.start(clientSocket);
+                            }
                             break;
-                        }
-
-                        if (index < 0 || index >= devices.size()) {
-                            System.out.println("Invalid index!");
-                            break;
-                        }
-
-                        clearOutput();
-                        Socket clientSocket = connectionController.acceptConnection(devices.get(index));
-                        if (clientSocket != null) {
-                            ReceiverController receiver = new ReceiverController();
-                            receiver.start(clientSocket);
                         }
                         break;
                     }
-                    break;
+                    case 2: {
+                        running = false;
+                        System.out.println("terminating...");
+                        InputProvider.terminate();
+                        BroadcastHandler.terminate();
+                        ConnectionRequestHandler.terminate();
+                        CloseableInterrupter.closeAll();
+                        break;
+                    }
+                    default: {
+                        System.out.println("Invalid option!");
+                        break;
+                    }
                 }
-                case 2: {
-                    running = false;
-                    System.out.println("terminating...");
-                    InputProvider.terminate();
-                    BroadcastHandler.terminate();
-                    ConnectionRequestHandler.terminate();
-                    CloseableInterrupter.closeAll();
-                    break;
-                }
-                default: {
-                    System.out.println("Invalid option!");
-                    break;
-                }
+            } catch (Exception e) {
+                System.err.println("Unexpected Exception: " + e.toString());
             }
         }
 

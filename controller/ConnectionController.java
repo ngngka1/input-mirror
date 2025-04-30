@@ -53,6 +53,7 @@ public class ConnectionController {
                     return null;
                 }
                 System.out.println("target device accepted the connection, now preparing to send data...");
+                System.out.println();
                 return clientSocket;
             } catch (SocketTimeoutException e) {
                 System.out.println("connection timed out while waiting for target device's acknowledgement.");

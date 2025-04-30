@@ -34,6 +34,7 @@ public class SenderController {
 
             ListenerManager.init(mouseButtonListener, keyboardListener, cursorListener);
 
+            System.out.println();
             System.out.println("Start sending inputs to target device");
             while (!(InputProvider.getNonBlockingInput().equals("n"))) {
                 String poll = ListenerManager.poll();
