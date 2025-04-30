@@ -102,13 +102,18 @@ public class ConnectionController {
             out.println("SYNACK");
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             clientSocket.setSoTimeout(3000); // wait for 3 seconds to let sender ACK the connection accept
-            if (!(in.readLine()).equals("ACK")) {
-                System.out.println("sender device has not acknowledged the connection, connection terminating.");
+            String response = in.readLine();
+            if (response == null) {
+                System.out.println("sender device has already closed the connection (possibly due to a timeout)");
                 clientSocket.close();
                 return null;
-            } else {
-                clientSocket.setSoTimeout(0); // reset timeout
             }
+            if (!response.equals("ACK")) {
+                System.out.println("sender device doesn't acknowledge the connection, connection terminating.");
+                clientSocket.close();
+                return null;
+            }
+            clientSocket.setSoTimeout(0); // reset timeout
         } catch (IOException e) {
             System.out.println("Failed to reach sender device, the connection has already been closed by the other device");
             return null; // Connection likely closed

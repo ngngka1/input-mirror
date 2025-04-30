@@ -38,7 +38,7 @@ public class DeviceSearcher {
                 if (deviceInfo.startsWith(deviceInfoPrefix)) {
                     try {
                         Device device = new Device(deviceInfo);
-                        int i = devices.size() - 1;
+                        int i = devices.size();
                         devices.add(device);
 //                        if (i == 0) {
 //                            System.out.println();
