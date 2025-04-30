@@ -1,7 +1,7 @@
 package receiver;
 
 import utils.InputProvider;
-import utils.LatestInputProcessor;
+import utils.LatestInputProvider;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -25,7 +25,8 @@ public class ReceiverController {
             ControllerManager.init();
             out.println("config:"+ screenWidth + ',' + screenHeight);
 
-            LatestInputProcessor lossyReader = new LatestInputProcessor(in);
+            LatestInputProvider lossyReader = new LatestInputProvider(in);
+            new Thread(lossyReader).start();
 
             while (!(InputProvider.getNonBlockingInput().equals("n"))) {
                 String data = lossyReader.readLatestLine();
