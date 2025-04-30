@@ -47,11 +47,12 @@ public class ConnectionController {
                 clientSocket = new Socket(targetDevice.getAddress(), targetDevice.getTcpPort());
                 System.out.println("Waiting for the target device to accept the connection...");
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                clientSocket.setSoTimeout(5 * 1000); // wait for 60 seconds before timing out
+                clientSocket.setSoTimeout(60 * 1000); // wait for 60 seconds before timing out
                 if (!(in.readLine().equals("SYNACK"))) {
                     System.out.println("Target device declined the connection.");
                     return null;
                 }
+                System.out.println("target device accepted the connection, now preparing to send data...");
                 return clientSocket;
             } catch (SocketTimeoutException e) {
                 System.out.println("connection timed out while waiting for target device's acknowledgement.");
@@ -101,7 +102,7 @@ public class ConnectionController {
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
             out.println("SYNACK");
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            clientSocket.setSoTimeout(3000); // wait for 3 seconds to let sender ACK the connection accept
+            clientSocket.setSoTimeout(5000); // wait for 5 seconds to let sender ACK the connection accept
             String response = in.readLine();
             if (response == null) {
                 System.out.println("sender device has already closed the connection (possibly due to a timeout)");
@@ -114,9 +115,12 @@ public class ConnectionController {
                 return null;
             }
             clientSocket.setSoTimeout(0); // reset timeout
+        } catch (SocketTimeoutException e){
+            System.out.println("sender device has not acknowledged the connection in expected time, connection terminating.");
+            return null;
         } catch (IOException e) {
             System.out.println("Failed to reach sender device, the connection has already been closed by the other device");
-            return null; // Connection likely closed
+            return null;
         }
 
         System.out.println("Connected to device: " + targetDevice.getHostname() + ", IP: " + targetDevice.getAddress());
