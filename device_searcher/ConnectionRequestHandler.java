@@ -1,6 +1,6 @@
 package device_searcher;
 
-import types.BackgroundTask;
+import types.BackgroundTaskStatic;
 import types.Device;
 import types.DeviceConnection;
 import utils.CloseableInterrupter;
@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 import java.net.*;
 import java.util.*;
 
-public class ConnectionRequestHandler extends BackgroundTask {
+public class ConnectionRequestHandler extends BackgroundTaskStatic {
     private final int tcpPort;
     private final static List<DeviceConnection> connectionRequestQueue = new ArrayList<>();
 

@@ -29,15 +29,17 @@ public class SenderController {
 
             String prevPoll = "";
             MouseButtonListener mouseButtonListener = new MouseButtonListener();
+            MouseScrollListener mouseScrollListener = new MouseScrollListener();
             KeyboardListener keyboardListener = new KeyboardListener();
             CursorListener cursorListener = new CursorListener(targetDimension[0], targetDimension[1]);
 
-            ListenerManager.init(mouseButtonListener, keyboardListener, cursorListener);
+            ListenerManager.init(mouseButtonListener, mouseScrollListener, keyboardListener, cursorListener);
 
             System.out.println();
             System.out.println("Start sending inputs to target device");
             while (!(InputProvider.getNonBlockingInput().equals("n"))) {
                 String poll = ListenerManager.poll();
+                System.out.println(poll); // for debug
                 if (!prevPoll.equals(poll))
                     out.println(poll);
                 prevPoll = poll;

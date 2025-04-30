@@ -21,10 +21,12 @@ public class ControllerManager {
         String[] parsedData = parseData(data);
         String[] posArgs = parsedData[0].split("[,]");
         int mbMask = Integer.parseInt(parsedData[1]);
+        int scrollRotations = Integer.parseInt(parsedData[2]);
 
         MouseController.moveTo(Integer.parseInt(posArgs[0]), Integer.parseInt(posArgs[1]));
         MouseController.controlMouseButtons(mbMask);
-//        Mouse.pressHotkey(parsedData[0]);
+        MouseController.scrollMouseByRotations(scrollRotations);
+//        KeyboardController.pressHotkey(parsedData[0]);
 
     }
 }

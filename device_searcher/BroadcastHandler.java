@@ -1,6 +1,6 @@
 package device_searcher;
 
-import types.BackgroundTask;
+import types.BackgroundTaskStatic;
 import utils.CloseableInterrupter;
 
 import java.io.*;
@@ -8,7 +8,7 @@ import java.net.*;
 
 
 // listens to UDP broadcasts from other active local devices, which then provides them with ip information about this device
-public class BroadcastHandler extends BackgroundTask {
+public class BroadcastHandler extends BackgroundTaskStatic {
     private static BroadcastHandler runningInstance = null;
 
     private final int udpPort; // which port this device can accept TCP connection

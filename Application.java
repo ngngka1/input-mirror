@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.List;
 
-import static device_searcher.DeviceSearcher.searchForDevices;
+//import static device_searcher.DeviceSearcher.searchForDevices;
 
 public class Application {
     private static boolean running = true;
@@ -52,14 +52,12 @@ public class Application {
         running = true;
         connected = false;
 
-
-        DeviceSearcher.init(BROADCAST_MESSAGE, DEVICE_INFO_PREFIX);
         // background jobs, do not need a reference
         InputProvider.init();
         BroadcastHandler.init(UDP_PORT, TCP_PORT, BROADCAST_MESSAGE, DEVICE_INFO_PREFIX);
         ConnectionRequestHandler.init(TCP_PORT);
 
-
+        DeviceSearcher deviceSearcher = new DeviceSearcher(BROADCAST_MESSAGE, DEVICE_INFO_PREFIX);
         ConnectionController connectionController = new ConnectionController(ConnectionRequestHandler.getConnectionRequests());
 
 
@@ -79,38 +77,52 @@ public class Application {
 
                 switch (option) {
                     case 0: {
-                        while (true) {
-                            List<Device> devices = searchForDevices(UDP_PORT);
+                        boolean searching = true;
+                        while (searching) {
+                            deviceSearcher.initAvailableDevices();
+                            deviceSearcher.printLocalDevicesNonBlocking(UDP_PORT);
                             System.out.println();
-                            if (devices.isEmpty()) {
-                                System.out.println("No active local devices found. (input 'r' to search again, 'n' to quit searching)");
-                            } else {
-                                System.out.println("would you like to connect to any of these devices? (if yes, input their index (e.g. '3'), if no, input 'r' to search again, or 'n' to quit searching.)");
+
+                            boolean retry = false;
+                            int index = -1;
+                            while (true) {
+                                input = InputProvider.getInput().trim().toLowerCase();
+                                if (input.equals("r")) {
+                                    retry = true;
+                                    break;
+                                }
+                                if (input.equals("n")) {
+                                    searching = false;
+                                    break;
+                                }
+
+                                try {
+                                    index = Integer.parseInt(input);
+//                                    if (index < 0 || index >= devices.size()) {
+//                                    }
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Please input a number!");
+                                    continue;
+                                }
+                                break;
                             }
-                            input = InputProvider.getInput().trim().toLowerCase();
-                            if (input.equals("r")) {
-                                clearOutput();
+                            if (retry) {continue;}
+                            if (!searching) {deviceSearcher.stopDevicePrinter(); break;}
+
+                            Device device;
+                            try {
+                                device = deviceSearcher.getAvailableDevices().get(index);
+                            } catch (IndexOutOfBoundsException e) {
+                                System.out.println("Invalid index!");
                                 continue;
                             }
-
-                            int index;
-                            try {
-                                index = Integer.parseInt(input);
-                            } catch (NumberFormatException e) {
-                                break;
-                            }
-
-                            if (index < 0 || index >= devices.size()) {
-                                System.out.println("Invalid index!");
-                                break;
-                            }
     //                        clearOutput();
-                            Socket clientSocket = connectionController.connect(devices.get(index));
+                            Socket clientSocket = connectionController.connect(device);
                             if (clientSocket != null) {
                                 SenderController sender = new SenderController();
                                 sender.start(clientSocket);
                             }
-                            break;
+                            searching = false;
                         }
                         break;
                     }
@@ -170,7 +182,5 @@ public class Application {
                 System.err.println("Unexpected Exception: " + e.toString());
             }
         }
-
-
     }
 }

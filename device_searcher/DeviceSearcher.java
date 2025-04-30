@@ -10,14 +10,33 @@ import java.util.List;
 public class DeviceSearcher {
     private static String broadcastMessage;
     private static String deviceInfoPrefix;
+    private final List<Device> availableDevices;
+    private DevicePrinter activeDevicesPrinter;
 
-    public static void init(String b, String d) {
+    public DeviceSearcher(String b, String d) {
         broadcastMessage = b;
         deviceInfoPrefix = d;
+        availableDevices = new ArrayList<>();
+        activeDevicesPrinter = null;
     }
 
-    public static List<Device> searchForDevices(int udpPort) {
-        List<Device> devices = new ArrayList<>();
+    public void initAvailableDevices() {
+        availableDevices.clear();
+    }
+
+    public List<Device> getAvailableDevices() {
+        return availableDevices;
+    }
+
+    public void stopDevicePrinter() {
+        if (activeDevicesPrinter != null) {
+            activeDevicesPrinter.kill();
+            activeDevicesPrinter = null;
+        }
+    }
+
+    public void printLocalDevicesNonBlocking(int udpPort) {
+        stopDevicePrinter();
         try {
             DatagramSocket socket = new DatagramSocket();
             socket.setBroadcast(true);
@@ -27,37 +46,13 @@ public class DeviceSearcher {
                     InetAddress.getByName("255.255.255.255"), udpPort);
             socket.send(sendPacket);
             System.out.println("Searching for devices...");
+            activeDevicesPrinter = new DevicePrinter(socket, availableDevices, deviceInfoPrefix);
+            new Thread(activeDevicesPrinter).start();
 
-            socket.setSoTimeout(5000); // Wait for 5 seconds for responses
-            byte[] receiveData = new byte[1024];
+        } catch (UnknownHostException e) {
 
-            while (true) {
-                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                socket.receive(receivePacket);
-                String deviceInfo = new String(receivePacket.getData(), 0, receivePacket.getLength());
-                if (deviceInfo.startsWith(deviceInfoPrefix)) {
-                    try {
-                        Device device = new Device(deviceInfo);
-                        int i = devices.size();
-                        devices.add(device);
-//                        if (i == 0) {
-//                            System.out.println();
-//                        }
-                        System.out.println(i + ". " + device.getHostname() + "(IP=" + device.getAddress() +")");
-                    } catch (UnknownHostException e) {
-                        System.out.println("Unknown host: " + deviceInfo);
-                    } catch (NumberFormatException e) {
-                        System.out.println("port number should be a number: " + deviceInfo);
-                    } catch (Exception e) {
-                        System.out.println("Invalid device info received: " + deviceInfo);
-                    }
-                }
-            }
-        } catch (SocketTimeoutException e) {
-            return devices;
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            System.out.println("e:" + e);
         }
     }
 }

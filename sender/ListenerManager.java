@@ -3,11 +3,12 @@ package sender;
 import com.github.kwhat.jnativehook.GlobalScreen;
 
 public class ListenerManager {
-    private static CursorListener cursorListener;
     private static MouseButtonListener mouseButtonListener;
+    private static MouseScrollListener mouseScrollListener;
     private static KeyboardListener keyboardListener;
+    private static CursorListener cursorListener;
 
-    public static void init(MouseButtonListener mouseButtonListener, KeyboardListener keyboardListener, CursorListener cursorListener) {
+    public static void init(MouseButtonListener mouseButtonListener, MouseScrollListener mouseScrollListener, KeyboardListener keyboardListener, CursorListener cursorListener) {
         try {
             // Register the global key listener
             GlobalScreen.registerNativeHook();
@@ -16,19 +17,22 @@ public class ListenerManager {
             e.printStackTrace();
             System.exit(1);
         }
-        ListenerManager.cursorListener = cursorListener;
         ListenerManager.mouseButtonListener = mouseButtonListener;
+        ListenerManager.mouseScrollListener = mouseScrollListener;
         ListenerManager.keyboardListener = keyboardListener;
+        ListenerManager.cursorListener = cursorListener; // no need to add this to global screen
 
-        GlobalScreen.addNativeMouseListener(mouseButtonListener);
-        GlobalScreen.addNativeKeyListener(keyboardListener);
+        GlobalScreen.addNativeMouseListener(ListenerManager.mouseButtonListener);
+        GlobalScreen.addNativeMouseWheelListener(ListenerManager.mouseScrollListener);
+        GlobalScreen.addNativeKeyListener(ListenerManager.keyboardListener);
     }
 
     public static String poll() {
         int[] cursorPos = cursorListener.getPos(); // cursor position
         int mbMask = mouseButtonListener.getButtonMask(); // mouse button mask
+        int scrollRotations = mouseScrollListener.getRotations();
         // keyboard wip (considering scalability)
 
-        return "d:" + cursorPos[0] + "," + cursorPos[1] + ":" + mbMask;
+        return "d:" + cursorPos[0] + "," + cursorPos[1] + ":" + mbMask + ":" + scrollRotations;
     }
 }

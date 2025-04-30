@@ -1,17 +1,15 @@
 package utils;
 
-import types.BackgroundTask;
+import types.BackgroundTaskStatic;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 import java.util.Queue;
-import java.util.Scanner;
 
 // separating this from Application.java in case the app may receive input in other forms in the future
-public class InputProvider extends BackgroundTask {
+public class InputProvider extends BackgroundTaskStatic {
     private static final Queue<String> inputQueue = new LinkedList<>();
 
     public static void init() {

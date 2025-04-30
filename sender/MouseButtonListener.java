@@ -11,7 +11,7 @@ public class MouseButtonListener implements NativeMouseListener {
     }
 
     @Override
-    public void nativeMouseClicked(NativeMouseEvent e) {
+    public void nativeMousePressed(NativeMouseEvent e) {
         // Check if the left mouse button was clicked
         int buttonClicked = e.getButton();
         updateButtonMask(buttonClicked, true);
