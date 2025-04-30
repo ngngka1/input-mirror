@@ -6,6 +6,7 @@ import device_searcher.ConnectionRequestHandler;
 import device_searcher.DeviceSearcher;
 import types.Device;
 import utils.InputProvider;
+import utils.CloseableInterrupter;
 
 import java.io.IOException;
 import java.net.*;
@@ -33,9 +34,9 @@ public class Application {
     private static void prompt()
     {
         System.out.println("Choose options: (enter '1' for option 1, vice versa) ");
-        System.out.println("1. search active local devices");
-        System.out.println("2. view connection requests ");
-        System.out.println("3. exit");
+        System.out.println("0. search active local devices");
+        System.out.println("1. view connection requests ");
+        System.out.println("2. exit");
     }
 
     private static void clearOutput() {
@@ -51,11 +52,12 @@ public class Application {
         connected = false;
 
 
+        DeviceSearcher.init(BROADCAST_MESSAGE, DEVICE_INFO_PREFIX);
         // background jobs, do not need a reference
         InputProvider.init();
-        DeviceSearcher.init(BROADCAST_MESSAGE, DEVICE_INFO_PREFIX);
         BroadcastHandler.init(UDP_PORT, TCP_PORT, BROADCAST_MESSAGE, DEVICE_INFO_PREFIX);
         ConnectionRequestHandler.init(TCP_PORT);
+
 
         ConnectionController connectionController = new ConnectionController(ConnectionRequestHandler.getConnectionRequests());
 
@@ -77,7 +79,11 @@ public class Application {
                     while (true) {
                         List<Device> devices = searchForDevices(UDP_PORT);
                         System.out.println();
-                        System.out.println("would you like to connect to any of these devices? (if yes, input their index (e.g. '3'), if no, input 'r' to search again, or 'n' to quit searching.");
+                        if (devices.isEmpty()) {
+                            System.out.println("No active local devices found. (input 'r' to search again, 'n' to quit searching)");
+                        } else {
+                            System.out.println("would you like to connect to any of these devices? (if yes, input their index (e.g. '3'), if no, input 'r' to search again, or 'n' to quit searching.)");
+                        }
                         input = InputProvider.getInput().trim().toLowerCase();
                         if (input.equals("r")) {
                             clearOutput();
@@ -104,46 +110,53 @@ public class Application {
                     break;
                 }
                 case 1: {
-                    ConnectionRequestHandler.clearClosedRequests();
-                    List<Device> devices = connectionController.getRequestedDevices();
-                    if (devices.isEmpty()) {
-                        System.out.println("No requests yet (input 'r' to reload, or 'n' to return)");
-                    } else {
-                        System.out.println("would you like to accept any of these connections? (if yes, input their index (e.g. '3'), if no, input 'r' to reload, or 'n' to return.");
-                    }
+                    while (true) {
+                        ConnectionRequestHandler.clearClosedRequests();
+                        List<Device> devices = connectionController.getRequestedDevices();
+                        if (devices.isEmpty()) {
+                            System.out.println("No requests yet (input 'r' to reload, or 'n' to return)");
+                        } else {
+                            System.out.println("would you like to accept any of these connections? (if yes, input their index (e.g. '3'), if no, input 'r' to reload, or 'n' to return.");
+                        }
 
-                    input = InputProvider.getInput().trim().toLowerCase();
-                    if (input.equals("r")) {
+                        input = InputProvider.getInput().trim().toLowerCase();
+                        if (input.equals("r")) {
+                            clearOutput();
+                            continue;
+                        }
+
+                        int index;
+                        try {
+                            index = Integer.parseInt(input);
+                        } catch (NumberFormatException e) {
+                            break;
+                        }
+
+                        if (index < 0 || index >= devices.size()) {
+                            System.out.println("Invalid index!");
+                            break;
+                        }
+
                         clearOutput();
-                        continue;
-                    }
-
-                    int index;
-                    try {
-                        index = Integer.parseInt(input);
-                    } catch (NumberFormatException e) {
+                        Socket clientSocket = connectionController.acceptConnection(devices.get(index));
+                        ReceiverController receiver = new ReceiverController();
+                        receiver.start(clientSocket);
                         break;
                     }
-
-                    if (index < 0 || index >= devices.size()) {
-                        System.out.println("Invalid index!");
-                        break;
-                    }
-
-                    clearOutput();
-                    Socket clientSocket = connectionController.acceptConnection(devices.get(index));
-                    ReceiverController receiver = new ReceiverController();
-                    receiver.start(clientSocket);
                     break;
                 }
                 case 2: {
                     running = false;
-                    InputProvider.termiante();
-                    BroadcastHandler.termiante();
-                    ConnectionRequestHandler.termiante();
+                    System.out.println("terminating...");
+                    InputProvider.terminate();
+                    BroadcastHandler.terminate();
+                    ConnectionRequestHandler.terminate();
+                    CloseableInterrupter.closeAll();
                     break;
                 }
             }
         }
+
+
     }
 }

@@ -4,16 +4,16 @@ public abstract class BackgroundTask implements Runnable {
     private static boolean paused = false;
     private static boolean terminated = false;
 
-    public static boolean isPaused() {return paused;}
-    public static boolean isTerminated() {return terminated;}
-    public static void pause() {
+    public synchronized static boolean isPaused() {return paused;}
+    public synchronized static boolean isTerminated() {return terminated;}
+    public synchronized static void pause() {
         paused = true;
     }
-    public static void unPause() {
+    public synchronized static void unPause() {
         paused = false;
     }
 
-    public static void termiante() {
+    public synchronized static void terminate() {
         terminated = true;
     }
 }

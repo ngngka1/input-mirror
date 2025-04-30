@@ -1,6 +1,7 @@
 package device_searcher;
 
 import types.BackgroundTask;
+import utils.CloseableInterrupter;
 
 import java.io.*;
 import java.net.*;
@@ -55,20 +56,28 @@ public class BroadcastHandler extends BackgroundTask {
     public void run() {
         try {
             DatagramSocket socket = new DatagramSocket(udpPort);
+            CloseableInterrupter.hook(socket);
             byte[] receiveData = new byte[1024];
 
             while (!isTerminated()) {
                 if (isPaused()) {continue;}
                 DatagramPacket receivedPacket = new DatagramPacket(receiveData, receiveData.length);
-
                 socket.receive(receivedPacket);
                 String message = new String(receivedPacket.getData(), 0, receivedPacket.getLength());
                 if (message.equals(broadcastMessage)) {
                     InetAddress receivedFrom = receivedPacket.getAddress();
-                    System.out.println("Received a connection request from: " + receivedFrom); // for debug
-                    respond(socket, receivedFrom);
+                    System.out.println("Received a broadcast message from: " + receivedFrom); // for debug
+                    if (!receivedFrom.equals(InetAddress.getLocalHost())) {
+                        respond(socket, receivedFrom);
+                    } else {
+                        System.out.println("Received a broadcast message from itself: " + receivedFrom); // for debug
+                    }
                 }
             }
+
+//            System.out.println("BroadcastHandler terminated"); // for debug
+        } catch (SocketException e) {
+//            System.out.println("BroadcastHandler terminated"); // for debug
         } catch (IOException e) {
             e.printStackTrace();
         }

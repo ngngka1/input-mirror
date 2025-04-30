@@ -3,11 +3,10 @@ package device_searcher;
 import types.BackgroundTask;
 import types.Device;
 import types.DeviceConnection;
+import utils.CloseableInterrupter;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.*;
 
 public class ConnectionRequestHandler extends BackgroundTask {
@@ -43,18 +42,31 @@ public class ConnectionRequestHandler extends BackgroundTask {
         this.tcpPort = tcpPort;
     }
 
+    public void socketInterrupter() {
+
+    }
+
     @Override
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(this.tcpPort)) {
+            CloseableInterrupter.hook(serverSocket);
             while (!isTerminated()) {
                 if (isPaused()) {continue;}
-                Socket clientSocket = serverSocket.accept();
+                Socket clientSocket;
+                try {
+                    clientSocket = serverSocket.accept();
+                } catch (SocketException e) {
+                    break;
+                }
+//                clientSocket.setSoTimeout(3000);
                 InetAddress clientAddress = clientSocket.getInetAddress();
                 synchronized (connectionRequestQueue) {
 //                    clearClosedRequests();
                     connectionRequestQueue.add(new DeviceConnection(clientSocket, new Device(clientAddress.getHostName(), clientAddress, clientSocket.getPort())));
                 }
             }
+
+//            System.out.println("ConnectionRequestHandler terminated"); // for debug
         }
         catch (IOException e) {
             System.err.println(e);

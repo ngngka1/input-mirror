@@ -1,5 +1,6 @@
 package controller;
 
+import device_searcher.BroadcastHandler;
 import types.Device;
 import types.DeviceConnection;
 
@@ -84,6 +85,7 @@ public class ConnectionController {
         Socket clientSocket = getAvailableSocketByDevice(targetDevice);
         if (clientSocket != null)
             System.out.println("Connected to device: " + targetDevice.getHostname() + ", IP: " + targetDevice.getAddress());
+
         return clientSocket;
     }
 

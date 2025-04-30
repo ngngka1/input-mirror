@@ -52,6 +52,7 @@ public class DeviceSearcher {
             return devices;
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
     }
 }

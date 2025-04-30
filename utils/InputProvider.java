@@ -2,13 +2,16 @@ package utils;
 
 import types.BackgroundTask;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Scanner;
 
 // separating this from Application.java in case the app may receive input in other forms in the future
 public class InputProvider extends BackgroundTask {
-    private static final Scanner scanner = new Scanner(System.in);
     private static final Queue<String> inputQueue = new LinkedList<>();
 
     public static void init() {
@@ -18,12 +21,26 @@ public class InputProvider extends BackgroundTask {
     // the logic to get input should entirely be here
     @Override
     public void run() {
-        while (!isTerminated() && scanner.hasNext()) {
-            synchronized (inputQueue) {
-                inputQueue.add(scanner.nextLine());
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader(System.in));
+        System.out.println("ConsoleInputReadTask run() called.");
+        CloseableInterrupter.hook(br);
+        String input;
+        while (!isTerminated()) {
+            try {
+                while (!br.ready()) {
+                    Thread.sleep(200);
+                }
+                input = br.readLine();
+            } catch (IOException | InterruptedException e) {
+                break;
             }
-            notifyAll();
+            synchronized (inputQueue) {
+                inputQueue.add(input);
+                inputQueue.notifyAll();
+            }
         }
+//        System.out.println("InputProvider terminated"); // for debug
     }
 
     public static String getNonBlockingInput() {
@@ -43,6 +60,25 @@ public class InputProvider extends BackgroundTask {
                     inputQueue.wait();
                 }
                 return inputQueue.remove();
+            } catch (InterruptedException e) {
+                //
+                return "";
+            }
+        }
+    }
+
+    public static String popUntilLatestInput() {
+        synchronized (inputQueue) {
+            try {
+                while (inputQueue.isEmpty()) {
+                    inputQueue.wait();
+                }
+
+                String x = null;
+                while (inputQueue.peek() != null) {
+                    x = inputQueue.remove();
+                }
+                return x;
             } catch (InterruptedException e) {
                 //
                 return "";
