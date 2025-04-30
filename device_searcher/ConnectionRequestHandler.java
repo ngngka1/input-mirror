@@ -30,12 +30,15 @@ public class ConnectionRequestHandler extends BackgroundTaskStatic {
                         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                         clientSocket.setSoTimeout(150);
                         String response = in.readLine();
-                        if (response == null) {
-                            connectionRequestQueue.remove(i);
-                            i--;
-                        }
+//                        if (response == null) {
+//                            connectionRequestQueue.remove(i);
+//                            i--;
+//                        }
+                    } catch (SocketTimeoutException e) {
+                        //
                     } catch (IOException e) {
-                        System.out.println("e: " + e);
+                        connectionRequestQueue.remove(i);
+                        i--;
                     }
                 }
             }

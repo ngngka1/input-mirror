@@ -39,8 +39,8 @@ public class SenderController {
             System.out.println("Start sending inputs to target device");
             while (!(InputProvider.getNonBlockingInput().equals("n"))) {
                 String poll = ListenerManager.poll();
-                System.out.println(poll); // for debug
                 if (!prevPoll.equals(poll)) {
+                    System.out.println(poll); // for debug
                     out.println(poll);
                     prevPoll = poll;
                 }
