@@ -25,6 +25,16 @@ public class BroadcastHandler extends BackgroundTask {
         }
     }
 
+    private String buildBroadcastResponseMessage(String hostname, String hostAddress, int tcpPort) {
+        return deviceInfoPrefix +
+                ":" +
+                hostname +
+                ":" +
+                hostAddress +
+                ":" +
+                tcpPort;
+    }
+
     public BroadcastHandler(int udpPort, int tcpPort, String broadcastMessage, String deviceInfoPrefix)
     {
         this.udpPort = udpPort;
@@ -33,20 +43,13 @@ public class BroadcastHandler extends BackgroundTask {
         this.deviceInfoPrefix = deviceInfoPrefix;
     }
 
-    public void respond(DatagramSocket socket, InetAddress address)
+    public void respond(DatagramSocket socket, InetAddress senderAddress, int senderPort)
     {
         try {
-            String deviceInfoBuilder = deviceInfoPrefix +
-                    ":" +
-                    InetAddress.getLocalHost().getHostName() +
-                    ":" +
-                    InetAddress.getLocalHost().getHostAddress() +
-                    ":" +
-                    tcpPort;
-
+            String deviceInfoBuilder = buildBroadcastResponseMessage(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost().getHostAddress(), tcpPort);
             byte[] sendData = (deviceInfoBuilder).getBytes();
 
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, address, socket.getPort());
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, senderAddress, senderPort);
             socket.send(sendPacket);
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,9 +71,9 @@ public class BroadcastHandler extends BackgroundTask {
                     InetAddress receivedFrom = receivedPacket.getAddress();
                     System.out.println("Received a broadcast message from: " + receivedFrom); // for debug
                     if (!receivedFrom.equals(InetAddress.getLocalHost())) {
-                        respond(socket, receivedFrom);
+                        respond(socket, receivedFrom, receivedPacket.getPort());
                     } else {
-                        System.out.println("Received a broadcast message from itself: " + receivedFrom); // for debug
+//                        System.out.println("Received a broadcast message from itself: " + receivedFrom); // for debug
                     }
                 }
             }

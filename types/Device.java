@@ -16,7 +16,7 @@ public class Device {
     }
 
     public Device(String deviceInfoString) throws UnknownHostException, NumberFormatException, IndexOutOfBoundsException {
-        String[] info = deviceInfoString.split(":");
+        String[] info = deviceInfoString.trim().split(":");
         this.hostname = info[1];
         this.address = InetAddress.getByName(info[2]);
         this.tcpPort = Integer.parseInt(info[3]);

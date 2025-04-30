@@ -21,7 +21,8 @@ public class Application {
     public static final int TCP_PORT = 6789; // TCP port for connection for this app
     public static final int UDP_PORT = 9876; // UDP port used for this app (should be same for all users, so
     private static final String BROADCAST_MESSAGE = "DISCOVER_DEVICE";
-    private static final String DEVICE_INFO_PREFIX = "DEVICE_INFO:";
+    private static final String DEVICE_INFO_PREFIX = "DEVICE_INFO"; // device information will be passed in the following format:
+                                                                    // DEVICE_INFO:hostname:hostAddress:hostTcpPort
 
     // indicates whether this device is already connected to another device currently
     public static boolean getConnectionState() {
