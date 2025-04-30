@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,7 @@ public class ConnectionController {
                 }
                 return clientSocket;
             } catch (SocketTimeoutException e) {
-                System.out.println("connection to target device timed out.");
+                System.out.println("connection timed out while waiting for target device's acknowledgement.");
                 if (clientSocket != null)
                     clientSocket.close();
                 return null;
@@ -67,7 +68,7 @@ public class ConnectionController {
     }
 
     // for receiver
-    private Socket getAvailableSocketByDevice(Device targetDevice) {
+    private Socket getSocketFromConnectionRequests(Device targetDevice) {
         Socket clientSocket = null;
         synchronized (connectionRequestQueue) {
             for (DeviceConnection curr : connectionRequestQueue) {
@@ -78,15 +79,12 @@ public class ConnectionController {
 
             }
             if (clientSocket == null) {
-                System.out.println("available socket of this device not found");
+                System.out.println("socket to this device is not found");
                 return null;
             }
-            try {
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-                out.println("SYNACK");
-            } catch (IOException e) {
-                System.out.println("Failed to reach target device, the connection has already been closed by the other device");
-                return null; // Connection likely closed
+            if (clientSocket.isClosed()) {
+                System.out.println("socket to this device is closed");
+                return null;
             }
             return clientSocket;
         }
@@ -95,15 +93,34 @@ public class ConnectionController {
 
 
     public Socket acceptConnection(Device targetDevice) {
-        Socket clientSocket = getAvailableSocketByDevice(targetDevice);
-        if (clientSocket != null)
-            System.out.println("Connected to device: " + targetDevice.getHostname() + ", IP: " + targetDevice.getAddress());
+        Socket clientSocket = getSocketFromConnectionRequests(targetDevice);
+        if (clientSocket == null)
+            return null;
+
+        try {
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            out.println("SYNACK");
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            clientSocket.setSoTimeout(3000); // wait for 3 seconds to let sender ACK the connection accept
+            if (!(in.readLine()).equals("ACK")) {
+                System.out.println("sender device has not acknowledged the connection, connection terminating.");
+                clientSocket.close();
+                return null;
+            } else {
+                clientSocket.setSoTimeout(0); // reset timeout
+            }
+        } catch (IOException e) {
+            System.out.println("Failed to reach sender device, the connection has already been closed by the other device");
+            return null; // Connection likely closed
+        }
+
+        System.out.println("Connected to device: " + targetDevice.getHostname() + ", IP: " + targetDevice.getAddress());
 
         return clientSocket;
     }
 
     public void declineConnection(Device targetDevice) {
-        Socket clientSocket = getAvailableSocketByDevice(targetDevice);
+        Socket clientSocket = getSocketFromConnectionRequests(targetDevice);
         if (clientSocket != null) {
             try {
                 clientSocket.close();

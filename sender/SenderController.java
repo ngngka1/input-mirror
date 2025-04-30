@@ -11,6 +11,9 @@ import java.net.Socket;
 public class SenderController {
     public void start(Socket clientSocket) {
         try {
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            out.write("ACK"); // tells receiver that the sender is now ready to send data through connection
+
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String configResponse = in.readLine().split("[:]")[1];
             String[] dimensionResponse = configResponse.split("[,]");
@@ -22,7 +25,6 @@ public class SenderController {
 
             }
 
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
             String prevPoll = "";
             MouseButtonListener mouseButtonListener = new MouseButtonListener();
             KeyboardListener keyboardListener = new KeyboardListener();
