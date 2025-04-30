@@ -69,7 +69,7 @@ public class BroadcastHandler extends BackgroundTask {
                 String message = new String(receivedPacket.getData(), 0, receivedPacket.getLength());
                 if (message.equals(broadcastMessage)) {
                     InetAddress receivedFrom = receivedPacket.getAddress();
-                    System.out.println("Received a broadcast message from: " + receivedFrom); // for debug
+//                    System.out.println("Received a broadcast message from: " + receivedFrom); // for debug
                     if (!receivedFrom.equals(InetAddress.getLocalHost())) {
                         respond(socket, receivedFrom, receivedPacket.getPort());
                     } else {

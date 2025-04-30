@@ -44,8 +44,8 @@ public class ConnectionController {
         try {
             try {
                 clientSocket = new Socket(targetDevice.getAddress(), targetDevice.getTcpPort());
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 System.out.println("Waiting for the target device to accept the connection...");
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 clientSocket.setSoTimeout(5 * 1000); // wait for 60 seconds before timing out
                 if (!(in.readLine().equals("SYNACK"))) {
                     System.out.println("Target device declined the connection.");
@@ -60,6 +60,7 @@ public class ConnectionController {
             }
         }
          catch (IOException e) {
+            System.out.println("e:" + e.toString());
             System.out.println("Target device has already closed the connection.");
             return null;
         }

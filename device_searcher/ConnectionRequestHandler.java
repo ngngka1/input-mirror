@@ -10,7 +10,7 @@ import java.net.*;
 import java.util.*;
 
 public class ConnectionRequestHandler extends BackgroundTask {
-//    private static ConnectionRequestHandler runningInstance = null;
+    private final int tcpPort;
     private final static List<DeviceConnection> connectionRequestQueue = new ArrayList<>();
 
     public static List<DeviceConnection> getConnectionRequests() {
@@ -28,12 +28,16 @@ public class ConnectionRequestHandler extends BackgroundTask {
     }
 
     public static void init(int tcpPort) {
-        new Thread(new ConnectionRequestHandler()).start();
+        new Thread(new ConnectionRequestHandler(tcpPort)).start();
+    }
+
+    public ConnectionRequestHandler(int tcpPort) {
+        this.tcpPort = tcpPort;
     }
 
     @Override
     public void run() {
-        try (ServerSocket serverSocket = new ServerSocket()) {
+        try (ServerSocket serverSocket = new ServerSocket(this.tcpPort)) {
             CloseableInterrupter.hook(serverSocket);
             while (!isTerminated()) {
                 if (isPaused()) {continue;}
@@ -43,6 +47,7 @@ public class ConnectionRequestHandler extends BackgroundTask {
                 } catch (SocketException e) {
                     break;
                 }
+//                clientSocket.setSoTimeout(3000);
                 InetAddress clientAddress = clientSocket.getInetAddress();
                 synchronized (connectionRequestQueue) {
 //                    clearClosedRequests();

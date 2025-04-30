@@ -102,7 +102,7 @@ public class Application {
                             System.out.println("Invalid index!");
                             break;
                         }
-                        clearOutput();
+//                        clearOutput();
                         Socket clientSocket = connectionController.connect(devices.get(index));
                         if (clientSocket != null) {
                             SenderController sender = new SenderController();
