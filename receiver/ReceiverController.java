@@ -26,8 +26,11 @@ public class ReceiverController {
 
             while (!(InputProvider.getNonBlockingInput().equals("n"))) {
                 String data = in.readLine();
-                if (data != null && data.startsWith("d:")) {
+                if (data == null) {continue;}
+                if (data.startsWith("d:")) {
                     ControllerManager.redirect(data.substring(2));
+                } else if(data.equals("END")) {
+                    clientSocket.close();
                 }
             }
             clientSocket.close();

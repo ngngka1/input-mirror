@@ -34,16 +34,17 @@ public class ListenerManager {
     }
 
     public static String poll() {
-        long startTime = System.nanoTime();
+//        long startTime = System.nanoTime();
         int[] cursorPos = cursorListener.getPos(); // cursor position
         int mbMask = mouseButtonListener.getButtonMask(); // mouse button mask
         int scrollRotations = mouseScrollListener.getRotations();
         // keyboard wip (considering scalability)
 
-        long elapsedTime = System.nanoTime() - startTime;
+        long elapsedTime = System.nanoTime() - lastPollTime;
         long sleepTime = POLLING_INTERVAL - elapsedTime;
+        System.out.println("sleepTime: " + sleepTime);
         try {
-            Thread.sleep(sleepTime / 1_000_000);
+            Thread.sleep(sleepTime > 0 ? sleepTime / 1_000_000 : 0);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             lastPollTime = System.nanoTime();

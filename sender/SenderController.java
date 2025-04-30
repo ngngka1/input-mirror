@@ -45,6 +45,7 @@ public class SenderController {
                     prevPoll = poll;
                 }
             }
+            out.println("END");
             clientSocket.close();
         } catch (IOException e) {
             System.out.println();
