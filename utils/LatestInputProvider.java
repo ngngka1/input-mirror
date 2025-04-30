@@ -48,7 +48,7 @@ public class LatestInputProvider extends BackgroundTask {
 //                setLatestLine(input);
             }
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
     }
 

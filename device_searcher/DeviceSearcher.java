@@ -50,7 +50,7 @@ public class DeviceSearcher {
             new Thread(activeDevicesPrinter).start();
 
         } catch (UnknownHostException e) {
-
+            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("e:" + e);
         }

@@ -35,7 +35,7 @@ public class ConnectionRequestHandler extends BackgroundTaskStatic {
 //                            i--;
 //                        }
                     } catch (SocketTimeoutException e) {
-                        //
+                        e.printStackTrace();
                     } catch (IOException e) {
                         connectionRequestQueue.remove(i);
                         i--;

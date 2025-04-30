@@ -19,7 +19,7 @@ public class CloseableInterrupter {
             try {
                 c.close();
             } catch (IOException e) {
-
+                e.printStackTrace();
             }
         }
     }

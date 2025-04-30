@@ -145,6 +145,7 @@ public class ConnectionController {
                 clientSocket.close();
                 System.out.println("connection declined successfully.");
             } catch (IOException e) {
+                e.printStackTrace();
 
             }
         }

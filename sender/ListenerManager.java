@@ -71,8 +71,11 @@ public class ListenerManager {
     public String keyboardPoll() {
         List<Integer> keys = keyboardListener.getKeys();
         StringBuilder pollBuilder = new StringBuilder();
-        for (int x : keys) {
-            pollBuilder.append(x);
+        for (int i = 0; i < keys.size(); i++) {
+            pollBuilder.append(keys.get(i));
+            if (i + 1 < keys.size()) {
+                pollBuilder.append(',');
+            }
         }
         return pollBuilder.toString();
     }

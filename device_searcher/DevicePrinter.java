@@ -60,6 +60,7 @@ public class DevicePrinter extends BackgroundTask {
                 }
             }
         } catch (SocketTimeoutException e) {
+            e.printStackTrace();
         } catch (IOException e) {
         }
         if (!isTerminated()) {

@@ -44,7 +44,7 @@ public class Application {
         try {
             Runtime.getRuntime().exec("cls");
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
     }
 
