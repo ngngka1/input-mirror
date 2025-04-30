@@ -17,10 +17,6 @@ public class KeyboardListener implements NativeKeyListener {
         keysQueue = new LinkedList<>();
     }
 
-    private void invokeHotkeyAction(HotkeyAction hotkeyAction) {
-
-    }
-
     public List<Integer> getKeys() {
         Integer x;
         List<Integer> keys = new ArrayList<>();
@@ -33,16 +29,20 @@ public class KeyboardListener implements NativeKeyListener {
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
         int keyCode = e.getKeyCode();
-        if ((e.getModifiers() & (NativeKeyEvent.CTRL_MASK | NativeKeyEvent.SHIFT_MASK)) == 0) {
+        int modifier = e.getModifiers();
+//        System.out.println("keyCode: " + keyCode);
+//        System.out.println("modifier: " + modifier);
+        int mask = HotkeyManager.getHotkeyModifierMask();
+        // Note: only works if hotkey uses only one modifier (e.g. CTRL), have to check with additional variables for more modifiers
+        if (modifier != 0 && (modifier & mask) == modifier) { // NativeKeyEvent.CTRL_MASK = 10 0010 (34), press ctrl-R = 10 0000 (32)
             HotkeyAction hotkeyAction = HotkeyManager.getHotKeyAction(keyCode);
             if (hotkeyAction != null) {
-                invokeHotkeyAction(hotkeyAction);
+                HotkeyManager.invokeHotkey(hotkeyAction);
             }
         } else {
             keysQueue.add(keyCode);
         }
     }
-
     @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
         int keyCode = e.getKeyCode();

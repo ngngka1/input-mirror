@@ -24,6 +24,20 @@ public class ListenerManager {
 
     // synchronization is not necessary for these two flags
     public void setMouseFlag(int mouseFlag) {
+        switch (mouseFlag) {
+            case BOTH_FLAG: {
+                System.out.println("Mouse input is now on both device");
+                break;
+            }
+            case RECEIVER_FLAG: {
+                System.out.println("Mouse input is now exclusively on receiver's device (WIP)");
+                break;
+            }
+            case SENDER_FLAG: {
+                System.out.println("Mouse input is now exclusively on sender's device");
+                break;
+            }
+        }
         this.mouseFlag = mouseFlag;
     }
 
@@ -32,6 +46,20 @@ public class ListenerManager {
     }
 
     public void setKeyboardFlag(int keyboardFlag) {
+        switch (keyboardFlag) {
+            case BOTH_FLAG: {
+                System.out.println("Mouse input is now on both device");
+                break;
+            }
+            case RECEIVER_FLAG: {
+                System.out.println("Mouse input is now exclusively on receiver's device (WIP)");
+                break;
+            }
+            case SENDER_FLAG: {
+                System.out.println("Mouse input is now exclusively on sender's device");
+                break;
+            }
+        }
         this.keyboardFlag = keyboardFlag;
     }
 

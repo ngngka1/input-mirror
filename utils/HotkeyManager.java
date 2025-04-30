@@ -9,11 +9,16 @@ import java.util.HashMap;
 public class HotkeyManager {
     // Note: mappings refer to which action key user has to press to invoke an action,
     // after pressing the modifier keys (Ctrl+Shift by default)
+    private static final int HOTKEY_MODIFIER_MASK = NativeKeyEvent.CTRL_MASK;
     private static final HashMap<HotkeyAction, Integer> mappings;
     public static final HotkeyAction TOGGLE_MOUSE = new HotkeyAction("toggleMouse");
     public static final HotkeyAction TOGGLE_KEYBOARD = new HotkeyAction("toggleKeyboard");
 
     private static ListenerManager listenerManagerInstance = null;
+
+    public static int getHotkeyModifierMask() {
+        return HOTKEY_MODIFIER_MASK;
+    }
 
     static {
         mappings = new HashMap<>();
@@ -35,7 +40,7 @@ public class HotkeyManager {
             return;
         }
 
-        // implementation that doesn't scale nice, might optimize in the future
+        // may change this
         if (hotkeyAction == TOGGLE_MOUSE) {
             listenerManagerInstance.setMouseFlag((listenerManagerInstance.getMouseFlag() + 1) % 3);
         } else if (hotkeyAction == TOGGLE_KEYBOARD) {

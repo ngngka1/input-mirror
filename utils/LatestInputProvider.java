@@ -27,7 +27,7 @@ public class LatestInputProvider extends BackgroundTask {
     public String readLatestLine() {
 //        String temp = null;
         if (inputQueue.size() > MAXIMUM_DELAY_ALLOWED) {
-            System.out.println("Max. Delayed exceeded, skipping inputs");
+//            System.out.println("Max. Delayed exceeded, skipping inputs");
             int i = 0;
             int count = (int) (Math.log(inputQueue.size()) / Math.log(2));
             while (i < count) {

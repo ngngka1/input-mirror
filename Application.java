@@ -40,13 +40,13 @@ public class Application {
         System.out.println("2. exit");
     }
 
-    private static void clearOutput() {
-        try {
-            Runtime.getRuntime().exec("cls");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private static void clearOutput() {
+//        try {
+//            Runtime.getRuntime().exec("cls");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public static void main(String[] args) {
         running = true;
@@ -67,7 +67,7 @@ public class Application {
                 prompt();
                 String input = InputProvider.getInput().trim().toLowerCase();
                 int option;
-                clearOutput();
+//                clearOutput();
                 try {
                     option = Integer.parseInt(input);
                 } catch (NumberFormatException e) {
@@ -139,7 +139,7 @@ public class Application {
 
                             input = InputProvider.getInput().trim().toLowerCase();
                             if (input.equals("r")) {
-                                clearOutput();
+//                                clearOutput();
                                 continue;
                             }
 
@@ -155,7 +155,7 @@ public class Application {
                                 break;
                             }
 
-                            clearOutput();
+//                            clearOutput();
                             Socket clientSocket = connectionController.acceptConnection(devices.get(index));
                             if (clientSocket != null) {
                                 ReceiverController receiver = new ReceiverController();

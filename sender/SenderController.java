@@ -56,7 +56,7 @@ public class SenderController {
             while (!clientSocket.isClosed() && !(InputProvider.getNonBlockingInput().equals("n"))) {
                 String poll = listenerManager.poll();
                 if (!prevPoll.equals(poll)) {
-                    System.out.println(poll); // for debug
+//                    System.out.println(poll); // for debug
                     out.println(poll);
                     prevPoll = poll;
                 }
