@@ -5,6 +5,7 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 .idea/
+target/
 
 project_description.pdf
 
