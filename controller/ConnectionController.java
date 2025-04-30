@@ -91,7 +91,16 @@ public class ConnectionController {
         }
     }
 
-
+//    public boolean checkSocketAvailability(Socket clientSocket) {
+//        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+//        clientSocket.setSoTimeout(5000); // wait for 5 seconds to let sender ACK the connection accept
+//        String response = in.readLine();
+//        if (response == null) {
+//            System.out.println("sender device has already closed the connection (possibly due to a timeout)");
+//            clientSocket.close();
+//            return null;
+//        }
+//    }
 
     public Socket acceptConnection(Device targetDevice) {
         Socket clientSocket = getSocketFromConnectionRequests(targetDevice);

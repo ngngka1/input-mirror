@@ -26,7 +26,6 @@ public class SenderController {
 
             }
             System.out.println("received config data from target device");
-            System.out.println(targetDimension[0] + " " + targetDimension[1]); // for debug
 
             String prevPoll = "";
             MouseButtonListener mouseButtonListener = new MouseButtonListener();
@@ -36,15 +35,13 @@ public class SenderController {
             ListenerManager.init(mouseButtonListener, keyboardListener, cursorListener);
 
             System.out.println("Start sending inputs to target device");
-            System.out.println("return because testing");
-            if (true)
-                return;
             while (!(InputProvider.getNonBlockingInput().equals("n"))) {
                 String poll = ListenerManager.poll();
                 if (!prevPoll.equals(poll))
                     out.println(poll);
                 prevPoll = poll;
             }
+            clientSocket.close();
         } catch (IOException e) {
 
         }

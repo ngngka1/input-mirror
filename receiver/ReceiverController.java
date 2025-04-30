@@ -30,6 +30,7 @@ public class ReceiverController {
                     ControllerManager.redirect(data.substring(2));
                 }
             }
+            clientSocket.close();
         } catch (IOException e) {
             System.err.println(e);
         }

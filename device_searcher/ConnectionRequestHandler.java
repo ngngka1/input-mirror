@@ -5,7 +5,9 @@ import types.Device;
 import types.DeviceConnection;
 import utils.CloseableInterrupter;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.*;
 import java.util.*;
 
@@ -22,6 +24,19 @@ public class ConnectionRequestHandler extends BackgroundTask {
                 if (connectionRequestQueue.get(i).clientSocket.isClosed()) {
                     connectionRequestQueue.remove(i);
                     i--;
+                } else {
+                    try {
+                        Socket clientSocket = connectionRequestQueue.get(i).clientSocket;
+                        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                        clientSocket.setSoTimeout(80);
+                        String response = in.readLine();
+                        if (response == null) {
+                            connectionRequestQueue.remove(i);
+                            i--;
+                        }
+                    } catch (IOException e) {
+
+                    }
                 }
             }
         }
