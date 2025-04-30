@@ -16,7 +16,12 @@ public class MouseScrollListener implements NativeMouseWheelListener {
     }
 
     public int getRotations() {
-        return scrollRotations;
+        if (scrollRotations != 0) {
+            int temp = scrollRotations;
+            scrollRotations = 0;
+            return temp;
+        }
+        return 0;
     }
 
 

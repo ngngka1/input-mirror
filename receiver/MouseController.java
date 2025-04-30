@@ -7,6 +7,7 @@ public class MouseController {
 //    private static final instance;
     private static Robot robot;
     private static int prevMbMask = 0b00000;
+    private static int prevScrollRotation = 0;
     public static void init(Robot robot) {
         MouseController.robot = robot;
     }
@@ -29,7 +30,8 @@ public class MouseController {
     }
 
     public static void scrollMouseByRotations(int rotations) {
-        robot.mouseWheel(rotations);
+        prevScrollRotation += rotations;
+        robot.mouseWheel(prevScrollRotation);
     }
 
     public static void flipKeyAction(int i) {

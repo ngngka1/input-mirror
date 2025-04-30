@@ -107,7 +107,8 @@ public class Application {
                                 break;
                             }
                             if (retry) {continue;}
-                            if (!searching) {deviceSearcher.stopDevicePrinter(); break;}
+                            deviceSearcher.stopDevicePrinter();
+                            if (!searching) {break;}
 
                             Device device;
                             try {

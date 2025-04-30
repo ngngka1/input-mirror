@@ -40,9 +40,10 @@ public class SenderController {
             while (!(InputProvider.getNonBlockingInput().equals("n"))) {
                 String poll = ListenerManager.poll();
                 System.out.println(poll); // for debug
-                if (!prevPoll.equals(poll))
+                if (!prevPoll.equals(poll)) {
                     out.println(poll);
-                prevPoll = poll;
+                    prevPoll = poll;
+                }
             }
             clientSocket.close();
         } catch (IOException e) {

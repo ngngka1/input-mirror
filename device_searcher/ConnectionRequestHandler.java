@@ -28,14 +28,14 @@ public class ConnectionRequestHandler extends BackgroundTaskStatic {
                     try {
                         Socket clientSocket = connectionRequestQueue.get(i).clientSocket;
                         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                        clientSocket.setSoTimeout(80);
+                        clientSocket.setSoTimeout(150);
                         String response = in.readLine();
                         if (response == null) {
                             connectionRequestQueue.remove(i);
                             i--;
                         }
                     } catch (IOException e) {
-
+                        System.out.println("e: " + e);
                     }
                 }
             }
