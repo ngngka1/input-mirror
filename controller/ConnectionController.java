@@ -116,7 +116,7 @@ public class ConnectionController {
             }
             clientSocket.setSoTimeout(0); // reset timeout
         } catch (SocketTimeoutException e){
-            System.out.println("sender device has not acknowledged the connection in expected time, connection terminating.");
+            System.out.println("sender device has not acknowledged the accept message in expected time, connection terminating.");
             return null;
         } catch (IOException e) {
             System.out.println("Failed to reach sender device, the connection has already been closed by the other device");

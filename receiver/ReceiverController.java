@@ -22,7 +22,7 @@ public class ReceiverController {
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
             ControllerManager.init();
-            out.write("config:"+ screenWidth + ',' + screenHeight);
+            out.println("config:"+ screenWidth + ',' + screenHeight);
 
             while (!(InputProvider.getNonBlockingInput().equals("n"))) {
                 String data = in.readLine();
