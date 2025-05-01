@@ -54,6 +54,7 @@ public class HotkeyManager {
         }
         if (hotkeyAction == HotkeyAction.TERMINATE_CONNECTION) {
             controllerInstance.terminate();
+            controllerInstance = null;
             return;
         }
 

@@ -16,8 +16,8 @@ public class MinimumDelayReader extends ThreadedBufferedReader {
         super(in);
     }
 
+    @Override
     public String getInput() {
-//        String temp = null;
         if (getInputQueueSize() > MAXIMUM_DELAY_ALLOWED) {
 //            System.out.println("Max. Delayed exceeded, skipping inputs");
             int i = 0;

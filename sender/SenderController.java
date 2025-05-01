@@ -14,7 +14,7 @@ import java.util.List;
 
 public class SenderController extends DeviceController {
 
-    private static final long POLLING_RATE = 500; // Polling rate in hz
+    private static final long POLLING_RATE = 250; // Polling rate in hz
     private static final long POLLING_INTERVAL = 1_000_000_000 / POLLING_RATE; // how many nanoseconds for one poll
     private static long lastPollTime;
 
@@ -175,7 +175,7 @@ public class SenderController extends DeviceController {
             while (!isTerminated()) {
                 String poll = this.poll();
                 if (!prevPoll.equals(poll)) {
-    //                    System.out.println(poll); // for debug
+                        System.out.println(poll); // for debug
                     sendData(poll);
                     prevPoll = poll;
                 }
@@ -190,5 +190,22 @@ public class SenderController extends DeviceController {
         }
         System.out.println();
         System.out.println("Connection terminated.");
+    }
+
+    private void initFlags() {
+        setKeyboardFlag(BOTH_FLAG);
+        setMouseFlag(BOTH_FLAG);
+    }
+
+    @Override
+    public void terminate() {
+        super.terminate();
+        initFlags();
+        try {
+            GlobalScreen.unregisterNativeHook();
+//            System.out.println("Listener terminated.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

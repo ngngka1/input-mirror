@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 import java.util.Queue;
 
 public class ThreadedBufferedReader extends BackgroundTask implements Readable {
@@ -16,7 +16,7 @@ public class ThreadedBufferedReader extends BackgroundTask implements Readable {
 
     public ThreadedBufferedReader(BufferedReader br) {
         this.br = br;
-        inputQueue = new LinkedList<>();
+        inputQueue = new ArrayDeque<>();
     }
 
     public ThreadedBufferedReader(InputStream inputStream) {
