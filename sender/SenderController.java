@@ -175,7 +175,7 @@ public class SenderController extends DeviceController {
             while (!isTerminated()) {
                 String poll = this.poll();
                 if (!prevPoll.equals(poll)) {
-                        System.out.println(poll); // for debug
+//                        System.out.println(poll); // for debug
                     sendData(poll);
                     prevPoll = poll;
                 }

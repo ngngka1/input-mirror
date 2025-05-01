@@ -44,13 +44,18 @@ public class KeyboardController {
         keyMap.put("X", KeyEvent.VK_X);
         keyMap.put("Y", KeyEvent.VK_Y);
         keyMap.put("Z", KeyEvent.VK_Z);
+        keyMap.put("F1", KeyEvent.VK_F1);
+        keyMap.put("F2", KeyEvent.VK_F2);
+        keyMap.put("F3", KeyEvent.VK_F3);
+        keyMap.put("F4", KeyEvent.VK_F4);
+        keyMap.put("F5", KeyEvent.VK_F5);
         keyMap.put("F6", KeyEvent.VK_F6);
         keyMap.put("F7", KeyEvent.VK_F7);
-        keyMap.put("ENTER", KeyEvent.VK_ENTER);
-        keyMap.put("SPACE", KeyEvent.VK_SPACE);
-        keyMap.put("ESCAPE", KeyEvent.VK_ESCAPE);
-        keyMap.put("TAB", KeyEvent.VK_TAB);
-        keyMap.put("BACKSPACE", KeyEvent.VK_BACK_SPACE);
+        keyMap.put("Enter", KeyEvent.VK_ENTER);
+        keyMap.put("Space", KeyEvent.VK_SPACE);
+        keyMap.put("Escape", KeyEvent.VK_ESCAPE);
+        keyMap.put("Tab", KeyEvent.VK_TAB);
+        keyMap.put("Backspace", KeyEvent.VK_BACK_SPACE);
     }
 
 

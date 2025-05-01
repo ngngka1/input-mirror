@@ -18,10 +18,11 @@ public class MinimumDelayReader extends ThreadedBufferedReader {
 
     @Override
     public String getInput() {
-        if (getInputQueueSize() > MAXIMUM_DELAY_ALLOWED) {
+        int queueSize = getInputQueueSize();
+        if (queueSize > MAXIMUM_DELAY_ALLOWED) {
 //            System.out.println("Max. Delayed exceeded, skipping inputs");
             int i = 0;
-            int count = (int) (Math.log(getInputQueueSize()) / Math.log(2));
+            int count = queueSize / 2;
             while (i < count) {
                 super.getInput();
                 i++;
