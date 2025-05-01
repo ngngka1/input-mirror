@@ -51,6 +51,7 @@ public class KeyboardController {
         keyMap.put("F5", KeyEvent.VK_F5);
         keyMap.put("F6", KeyEvent.VK_F6);
         keyMap.put("F7", KeyEvent.VK_F7);
+        keyMap.put("Ctrl", KeyEvent.VK_CONTROL);
         keyMap.put("Enter", KeyEvent.VK_ENTER);
         keyMap.put("Space", KeyEvent.VK_SPACE);
         keyMap.put("Escape", KeyEvent.VK_ESCAPE);
@@ -64,7 +65,7 @@ public class KeyboardController {
             return;
         }
         String[] parsedData = keyboardData.split("[,]");
-        System.out.println("keyboard data in receiver: " + keyboardData);
+//        System.out.println("keyboard data in receiver: " + keyboardData);
         try {
             for (String x : parsedData) {
                 int key = Integer.parseInt(x);
@@ -80,7 +81,7 @@ public class KeyboardController {
                         robot.keyRelease(awtKeyEvent);
                     }
                 } else {
-                    System.out.println("No key '" + keyText + "' for awt key event"); // for debug
+//                    System.out.println("No key '" + keyText + "' for awt key event"); // for debug
                 }
             }
         } catch (NumberFormatException e) {
