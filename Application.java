@@ -52,10 +52,12 @@ public class Application {
         running = true;
         connected = false;
 
+        // threaded scanner so user can provide inputs whenever they want, instead of needing to wait for
+        // application's prompt before inputting, also allowing for
         ThreadedScanner threadedScanner = new ThreadedScanner();
         new Thread(threadedScanner).start();
 
-        // background jobs, do not need a reference
+        // static background jobs, do not need a reference
         BroadcastHandler.init(UDP_PORT, TCP_PORT, BROADCAST_MESSAGE, DEVICE_INFO_PREFIX);
         ConnectionRequestHandler.init(TCP_PORT);
 

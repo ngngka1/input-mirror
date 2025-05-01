@@ -12,6 +12,8 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 public class DevicePrinter extends BackgroundTask {
+    // may also have to hook the socket to closeableInterrupter, but seems unnecessary because it is not likely
+    // to block the termination
 
     private final DatagramSocket socket;
     private final List<Device> availableDevices;

@@ -25,16 +25,21 @@ public class ThreadedBufferedReader extends BackgroundTask implements Readable {
 
     @Override
     public void run() {
-//        CloseableInterrupter.hook(br);
+        CloseableInterrupter.hook(br);
         String input;
         while (!isTerminated()) {
             try {
+                while (!br.ready()) {
+//                    Thread.sleep(50);
+                }
                 input = br.readLine();
             } catch (IOException e) {
                 break;
             }
             inputQueue.add(input);
         }
+
+//        System.out.println("Terminated threaded scanner");
     }
 
     public String getInputNonBlocking() {

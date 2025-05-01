@@ -77,10 +77,8 @@ public class BroadcastHandler extends BackgroundTaskStatic {
                     }
                 }
             }
-
 //            System.out.println("BroadcastHandler terminated"); // for debug
         } catch (SocketException e) {
-            e.printStackTrace();
 //            System.out.println("BroadcastHandler terminated"); // for debug
         } catch (IOException e) {
             e.printStackTrace();

@@ -50,7 +50,7 @@ public class HotkeyManager {
     public static void invokeHotkey(HotkeyAction hotkeyAction) {
         if (controllerInstance == null) {
             System.out.println("listenerManager has to be hooked to the HotkeyManager Class for hotkeys to work with running listeners!");
-            return
+            return;
         }
         if (hotkeyAction == HotkeyAction.TERMINATE_CONNECTION) {
             controllerInstance.terminate();
