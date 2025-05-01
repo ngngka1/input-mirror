@@ -43,16 +43,18 @@ public class ThreadedBufferedReader extends BackgroundTask implements Readable {
     }
 
     public String getInputNonBlocking() {
-        return inputQueue.isEmpty() ? "" : inputQueue.remove();
+        String x = inputQueue.poll();
+        return x == null ? "" : x;
     }
 
     @Override
     public String getInput()
     {
-        while (inputQueue.isEmpty()) {
-            continue;
-        }
-        return inputQueue.remove();
+        String x = null;
+        do {
+            x = inputQueue.poll();
+        } while (x == null);
+        return x;
     }
 
     public int getInputQueueSize() {

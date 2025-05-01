@@ -40,7 +40,7 @@ public class SenderController extends DeviceController {
             throw new RuntimeException("Error trying to obtain the I/O stream, stopping connection");
         }
 
-        getOutputWriter().println("ACK"); // tells receiver that the sender is now ready to send data through connection
+        sendData("ACK"); // tells receiver that the sender is now ready to send data through connection
         System.out.println("waiting for config data from target device...");
 
         String configResponse;
