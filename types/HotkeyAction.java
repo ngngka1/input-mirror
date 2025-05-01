@@ -1,6 +1,9 @@
 package types;
 
 public class HotkeyAction {
+    public static final HotkeyAction TOGGLE_MOUSE = new HotkeyAction("toggleMouse");
+    public static final HotkeyAction TOGGLE_KEYBOARD = new HotkeyAction("toggleKeyboard");
+
     private final String text;
 
     public HotkeyAction(String text) {

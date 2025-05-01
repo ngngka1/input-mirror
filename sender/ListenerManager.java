@@ -12,6 +12,7 @@ public class ListenerManager {
     private static final int BOTH_FLAG = 0;
     private static final int RECEIVER_FLAG = 1;
     private static final int SENDER_FLAG = 2;
+    private final InputBlocker localInputBlocker;
 
     private int mouseFlag = 0; // indicate which device the mouse will control, (0=both, 1=receiver, 2=sender)
     private int keyboardFlag = 0; // indicate which device the keyboard will control, (0=both, 1=receiver, 2=sender)
@@ -22,19 +23,23 @@ public class ListenerManager {
     private CursorListener cursorListener;
 
 
+
     // synchronization is not necessary for these two flags
     public void setMouseFlag(int mouseFlag) {
         switch (mouseFlag) {
             case BOTH_FLAG: {
                 System.out.println("Mouse input is now on both device");
+                localInputBlocker.enableMouseInput();
                 break;
             }
             case RECEIVER_FLAG: {
                 System.out.println("Mouse input is now exclusively on receiver's device (WIP)");
+                localInputBlocker.disableMouseInput();
                 break;
             }
             case SENDER_FLAG: {
                 System.out.println("Mouse input is now exclusively on sender's device");
+                localInputBlocker.enableMouseInput();
                 break;
             }
         }
@@ -49,14 +54,17 @@ public class ListenerManager {
         switch (keyboardFlag) {
             case BOTH_FLAG: {
                 System.out.println("Mouse input is now on both device");
+                localInputBlocker.enableKeyboardInput();
                 break;
             }
             case RECEIVER_FLAG: {
                 System.out.println("Mouse input is now exclusively on receiver's device (WIP)");
+                localInputBlocker.disableKeyboardInput();
                 break;
             }
             case SENDER_FLAG: {
                 System.out.println("Mouse input is now exclusively on sender's device");
+                localInputBlocker.enableKeyboardInput();
                 break;
             }
         }
@@ -82,6 +90,8 @@ public class ListenerManager {
         this.mouseScrollListener = mouseScrollListener;
         this.keyboardListener = keyboardListener;
         this.cursorListener = cursorListener; // no need to add this to global screen
+
+        localInputBlocker = new InputBlocker();
 
         GlobalScreen.addNativeMouseListener(this.mouseButtonListener);
         GlobalScreen.addNativeMouseWheelListener(this.mouseScrollListener);

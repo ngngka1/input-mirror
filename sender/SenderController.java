@@ -42,7 +42,6 @@ public class SenderController {
             }
             System.out.println("received config data from target device");
 
-            String prevPoll = "";
             MouseButtonListener mouseButtonListener = new MouseButtonListener();
             MouseScrollListener mouseScrollListener = new MouseScrollListener();
             KeyboardListener keyboardListener = new KeyboardListener();
@@ -53,6 +52,8 @@ public class SenderController {
 
             System.out.println();
             System.out.println("Start sending inputs to target device");
+            String prevPoll = "";
+
             while (!clientSocket.isClosed() && !(InputProvider.getNonBlockingInput().equals("n"))) {
                 String poll = listenerManager.poll();
                 if (!prevPoll.equals(poll)) {
