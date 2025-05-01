@@ -184,7 +184,6 @@ public class SenderController extends DeviceController {
                     break;
                 }
             }
-            sendData("END");
         } catch (IOException e) {
 
         }

@@ -57,6 +57,7 @@ public abstract class DeviceController {
         terminated = true;
         if (!clientSocket.isClosed()) {
             try {
+                sendData("END");
                 clientSocket.close();
             } catch (IOException e) {
 
