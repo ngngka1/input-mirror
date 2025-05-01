@@ -33,7 +33,7 @@ public class KeyboardListener implements NativeKeyListener {
 //        System.out.println("keyCode: " + keyCode);
 //        System.out.println("modifier: " + modifier);
         int mask = HotkeyManager.getHotkeyModifierMask();
-        // Note: only works if hotkey uses only one modifier (e.g. CTRL), have to check with additional variables for more modifiers
+        // Note: only works if hotkey uses only one modifier (e.g. CTRL), have to check with additional logic for more modifiers
         if (modifier != 0 && (modifier & mask) == modifier) { // NativeKeyEvent.CTRL_MASK = 10 0010 (34), press ctrl-R = 10 0000 (32)
             HotkeyAction hotkeyAction = HotkeyManager.getHotKeyAction(keyCode);
             if (hotkeyAction != null) {

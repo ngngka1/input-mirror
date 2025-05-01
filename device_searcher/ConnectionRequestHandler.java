@@ -29,13 +29,9 @@ public class ConnectionRequestHandler extends BackgroundTaskStatic {
                         Socket clientSocket = connectionRequestQueue.get(i).clientSocket;
                         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                         clientSocket.setSoTimeout(150);
-                        String response = in.readLine();
-//                        if (response == null) {
-//                            connectionRequestQueue.remove(i);
-//                            i--;
-//                        }
+                        in.readLine();
                     } catch (SocketTimeoutException e) {
-                        e.printStackTrace();
+                        // socket is still connected, no problem
                     } catch (IOException e) {
                         connectionRequestQueue.remove(i);
                         i--;
@@ -76,7 +72,7 @@ public class ConnectionRequestHandler extends BackgroundTaskStatic {
 //            System.out.println("ConnectionRequestHandler terminated"); // for debug
         }
         catch (IOException e) {
-            System.err.println(e);
+            // most likely due to app termination
         }
 
     }

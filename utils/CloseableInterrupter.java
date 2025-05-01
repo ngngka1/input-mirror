@@ -6,12 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CloseableInterrupter {
-    private static List<Closeable> closeables = new ArrayList<>();
+    private static final List<Closeable> closeables = new ArrayList<>();
 
-
-
-    public static void hook(Closeable socket) {
-        closeables.add(socket);
+    public static void hook(Closeable closeable) {
+        closeables.add(closeable);
     }
 
     public static void closeAll() {

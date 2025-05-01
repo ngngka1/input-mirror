@@ -1,7 +1,10 @@
 package utils;
 
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+import controller.DeviceController;
+import receiver.ReceiverController;
 import sender.ListenerManager;
+import sender.SenderController;
 import types.HotkeyAction;
 
 import java.util.HashMap;
@@ -14,7 +17,7 @@ public class HotkeyManager {
     private static final HashMap<HotkeyAction, Integer> mappings;
 
 
-    private static ListenerManager listenerManagerInstance = null;
+    private static DeviceController controllerInstance = null;
 
     public static int getHotkeyModifierMask() {
         return HOTKEY_MODIFIER_MASK;
@@ -34,27 +37,39 @@ public class HotkeyManager {
 //        mappings.put("toggleDevice", NativeKeyEvent.VC_D);
         mappings.put(HotkeyAction.TOGGLE_MOUSE, NativeKeyEvent.VC_M);
         mappings.put(HotkeyAction.TOGGLE_KEYBOARD, NativeKeyEvent.VC_K);
+        mappings.put(HotkeyAction.TERMINATE_CONNECTION, NativeKeyEvent.VC_N);
     }
     public static int getMapping(HotkeyAction action) {
         return mappings.getOrDefault(action, -1);
     }
 
-    public static void hook(ListenerManager listenerManager) {
-        HotkeyManager.listenerManagerInstance = listenerManager;
+    public static void hook(DeviceController controllerInstance) {
+        HotkeyManager.controllerInstance = controllerInstance;
     }
 
     public static void invokeHotkey(HotkeyAction hotkeyAction) {
-        if (listenerManagerInstance == null) {
-            System.out.println("listener manager has to be hooked to the Hotkey Class for hotkeys to work!");
+        if (controllerInstance == null) {
+            System.out.println("listenerManager has to be hooked to the HotkeyManager Class for hotkeys to work with running listeners!");
+            return
+        }
+        if (hotkeyAction == HotkeyAction.TERMINATE_CONNECTION) {
+            controllerInstance.terminate();
             return;
         }
 
-        // may change this
-        if (hotkeyAction == HotkeyAction.TOGGLE_MOUSE) {
-            listenerManagerInstance.setMouseFlag((listenerManagerInstance.getMouseFlag() + 1) % 3);
-        } else if (hotkeyAction == HotkeyAction.TOGGLE_KEYBOARD) {
-            listenerManagerInstance.setKeyboardFlag((listenerManagerInstance.getKeyboardFlag() + 1) % 3);
+        if (controllerInstance instanceof SenderController) {
+            SenderController x = ((SenderController) controllerInstance);
+            if (hotkeyAction == HotkeyAction.TOGGLE_MOUSE) {
+                x.setMouseFlag((x.getMouseFlag() + 1) % 3);
+            } else if (hotkeyAction == HotkeyAction.TOGGLE_KEYBOARD) {
+                x.setKeyboardFlag((x.getKeyboardFlag() + 1) % 3);
+            }
+        } else {
+            ReceiverController x = ((ReceiverController) controllerInstance);
+
         }
+
+        // may change this
     }
 
     public static HotkeyAction getHotKeyAction(int actionKeyCode) {

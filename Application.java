@@ -5,10 +5,10 @@ import device_searcher.BroadcastHandler;
 import device_searcher.ConnectionRequestHandler;
 import device_searcher.DeviceSearcher;
 import types.Device;
-import utils.InputProvider;
+import utils.HotkeyManager;
+import utils.ThreadedScanner;
 import utils.CloseableInterrupter;
 
-import java.io.IOException;
 import java.net.*;
 import java.util.List;
 
@@ -52,8 +52,10 @@ public class Application {
         running = true;
         connected = false;
 
+        ThreadedScanner threadedScanner = new ThreadedScanner();
+        new Thread(threadedScanner).start();
+
         // background jobs, do not need a reference
-        InputProvider.init();
         BroadcastHandler.init(UDP_PORT, TCP_PORT, BROADCAST_MESSAGE, DEVICE_INFO_PREFIX);
         ConnectionRequestHandler.init(TCP_PORT);
 
@@ -65,7 +67,7 @@ public class Application {
             try {
 
                 prompt();
-                String input = InputProvider.getInput().trim().toLowerCase();
+                String input = threadedScanner.getInput().trim().toLowerCase();
                 int option;
 //                clearOutput();
                 try {
@@ -86,7 +88,7 @@ public class Application {
                             boolean retry = false;
                             int index = -1;
                             while (true) {
-                                input = InputProvider.getInput().trim().toLowerCase();
+                                input = threadedScanner.getInput().trim().toLowerCase();
                                 if (input.equals("r")) {
                                     retry = true;
                                     break;
@@ -120,8 +122,9 @@ public class Application {
     //                        clearOutput();
                             Socket clientSocket = connectionController.connect(device);
                             if (clientSocket != null) {
-                                SenderController sender = new SenderController();
-                                sender.start(clientSocket);
+                                SenderController sender = new SenderController(clientSocket);
+                                HotkeyManager.hook(sender);
+                                sender.start();
                             }
                             searching = false;
                         }
@@ -137,7 +140,7 @@ public class Application {
                                 System.out.println("would you like to accept any of these connections? (if yes, input their index (e.g. '3'), if no, input 'r' to reload, or 'n' to return.");
                             }
 
-                            input = InputProvider.getInput().trim().toLowerCase();
+                            input = threadedScanner.getInput().trim().toLowerCase();
                             if (input.equals("r")) {
 //                                clearOutput();
                                 continue;
@@ -158,8 +161,8 @@ public class Application {
 //                            clearOutput();
                             Socket clientSocket = connectionController.acceptConnection(devices.get(index));
                             if (clientSocket != null) {
-                                ReceiverController receiver = new ReceiverController();
-                                receiver.start(clientSocket);
+                                ReceiverController receiver = new ReceiverController(clientSocket);
+                                receiver.start();
                             }
                             break;
                         }
@@ -168,7 +171,7 @@ public class Application {
                     case 2: {
                         running = false;
                         System.out.println("terminating...");
-                        InputProvider.terminate();
+                        threadedScanner.terminate();
                         BroadcastHandler.terminate();
                         ConnectionRequestHandler.terminate();
                         CloseableInterrupter.closeAll();

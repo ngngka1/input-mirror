@@ -60,8 +60,9 @@ public class DevicePrinter extends BackgroundTask {
                 }
             }
         } catch (SocketTimeoutException e) {
-            e.printStackTrace();
+            // timeout
         } catch (IOException e) {
+            // most likely due to app termination
         }
         if (!isTerminated()) {
             synchronized (availableDevices) {

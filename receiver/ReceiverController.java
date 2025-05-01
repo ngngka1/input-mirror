@@ -1,7 +1,7 @@
 package receiver;
 
-import utils.InputProvider;
-import utils.LatestInputProvider;
+import controller.DeviceController;
+import utils.MinimumDelayReader;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -10,37 +10,40 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class ReceiverController {
-    private static final double screenWidth;
-    private static final double screenHeight;
-    static {
+public class ReceiverController extends DeviceController {
+
+    public ReceiverController(Socket clientSocket) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        screenWidth = screenSize.getWidth();
-        screenHeight = screenSize.getHeight();
-    }
-    public void start(Socket clientSocket) {
+        double screenWidth = screenSize.getWidth();
+        double screenHeight = screenSize.getHeight();
+
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-            out.println("config:"+ screenWidth + ',' + screenHeight);
-
-            LatestInputProvider lossyReader = new LatestInputProvider(in);
+            setOutputWriter(new PrintWriter(clientSocket.getOutputStream(), true));
+            MinimumDelayReader lossyReader = new MinimumDelayReader(in);
             new Thread(lossyReader).start();
+            setInputReader(lossyReader);
+        } catch (IOException e) {
+            throw new RuntimeException("Error trying to obtain the I/O stream, stopping connection");
+        }
+        sendData("config:"+ screenWidth + ',' + screenHeight);
 
-            try {
-                Robot robot = new Robot();
-                MouseController.init(robot);
-                KeyboardController.init(robot);
-            } catch (AWTException e) {
-                System.err.println("AWT exception");
-                return;
-            }
+        try {
+            Robot robot = new Robot();
+            MouseController.init(robot);
+            KeyboardController.init(robot);
+        } catch (AWTException e) {
+            throw new RuntimeException("Error while initializing keyboard/mouse controller, stopping connection");
+        }
+    }
 
-            while (!clientSocket.isClosed() && !(InputProvider.getNonBlockingInput().equals("n"))) {
-                String data = lossyReader.readLatestLine();
+    public void start() {
+        try {
+            while (!isTerminated()) {
+                String data = readData();
                 if (data == null) {continue;}
                 if(data.equals("END")) {
-                    clientSocket.close();
+                    terminate();
                     break;
                 }
 
@@ -53,10 +56,9 @@ public class ReceiverController {
                     System.out.println("Error in format of data received from sender");
                 }
             }
-            clientSocket.close();
         } catch (IOException e) {
-            System.out.println();
-            System.out.println("Connection terminated.");
         }
+        System.out.println();
+        System.out.println("Connection terminated.");
     }
 }
