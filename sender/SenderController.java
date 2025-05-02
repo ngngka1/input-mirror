@@ -167,6 +167,7 @@ public class SenderController extends DeviceController {
         return mouseData + "|" + keyboardData;
     }
 
+    @Override
     public void start() {
         System.out.println();
         System.out.println("Start sending inputs to target device");

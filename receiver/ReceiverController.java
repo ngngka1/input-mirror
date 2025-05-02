@@ -1,6 +1,8 @@
 package receiver;
 
+import com.github.kwhat.jnativehook.GlobalScreen;
 import controller.DeviceController;
+import utils.HotkeyManager;
 import utils.MinimumDelayReader;
 
 import java.awt.*;
@@ -35,8 +37,20 @@ public class ReceiverController extends DeviceController {
         } catch (AWTException e) {
             throw new RuntimeException("Error while initializing keyboard/mouse controller, stopping connection");
         }
+
+        try {
+            // Register the global key listener
+            GlobalScreen.registerNativeHook();
+            System.out.println("Global hook registered, listening for key events...");
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to register global hook, stopping connection");
+        }
+
+        HotkeyListener hotkeyListener = new HotkeyListener();
+        GlobalScreen.addNativeKeyListener(hotkeyListener);
     }
 
+    @Override
     public void start() {
         try {
             while (!isTerminated()) {

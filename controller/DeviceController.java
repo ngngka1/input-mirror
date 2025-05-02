@@ -13,6 +13,8 @@ public abstract class DeviceController {
 
     private boolean terminated = false;
 
+    public abstract void start();
+
     public void setOutputWriter(PrintWriter x) {
         out = x;
     }

@@ -31,27 +31,24 @@ public class MouseController {
     }
 
     public static void controlMouseButtons(int mbMask) {
-        int changeMask = prevMbMask ^ mbMask;
-        int i = 0;
-        while (changeMask > 0) {
-            if ((changeMask & 1) == 1)
-                flipKeyAction(i);
-            changeMask = changeMask >> 1;
-            i++;
-        }
+        // example:
+        // prevMbMask (previous state) = 00101 (1 = key pressed, 0 = nothing/released)
+
+        // mbMask (new state) = 00110 (1 = key pressed, 0 = nothing/released)
+
+        // mousePressMask = (~prevMbMask) & mbMask = 11010 & 00110 = 00010
+        // mouseReleaseMask = prevMbMask & (prevMbMask ^ mbMask) = 00101 & (00101 ^ 00110) = 00101 & 00011 = 00001
+
+        int mousePressMask = (~prevMbMask) & mbMask;
+        int mouseReleaseMask = prevMbMask & (prevMbMask ^ mbMask);
+        robot.mousePress(mousePressMask);
+        robot.mouseRelease(mouseReleaseMask);
         prevMbMask = mbMask;
     }
 
+
     public static void scrollMouseByRotations(int rotations) {
         robot.mouseWheel(rotations);
-    }
-
-    public static void flipKeyAction(int i) {
-        if (((prevMbMask >> i) & 1) == 0) {
-            robot.mousePress(InputEvent.getMaskForButton(i + 1));
-        } else {
-            robot.mouseRelease(InputEvent.getMaskForButton(i + 1));
-        }
     }
 
 }

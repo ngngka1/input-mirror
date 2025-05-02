@@ -1,11 +1,16 @@
 package receiver;
 
+import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import types.HotkeyAction;
 import utils.HotkeyManager;
 
 public class HotkeyListener implements NativeKeyListener {
+
+    public HotkeyListener() {
+
+    }
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {

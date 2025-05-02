@@ -3,7 +3,6 @@ package utils;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import controller.DeviceController;
 import receiver.ReceiverController;
-import sender.ListenerManager;
 import sender.SenderController;
 import types.HotkeyAction;
 

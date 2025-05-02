@@ -2,6 +2,7 @@ package sender.overlay;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class MouseBlockerOverlay extends JFrame {
     private final JTextField textField;
@@ -23,13 +24,19 @@ public class MouseBlockerOverlay extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
 
+        // hide the cursor when visible, so it feels like the mouse input is on another device
+        BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+                cursorImg, new Point(0, 0), "blank cursor");
+        panel.setCursor(blankCursor);
+
         textField = new JTextField(0);
 //        Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 //        textField.setText();
 
         textField.setFocusable(false);
         textField.setFont(new Font("Arial", Font.BOLD, 24));
-        textField.setCursor(Cursor.getDefaultCursor());
+        textField.setCursor(blankCursor);
         textField.setBorder(BorderFactory.createEmptyBorder());
         textField.setHorizontalAlignment(JTextField.CENTER);
 //        textField.setSize(screenSize.width, 32);
@@ -41,6 +48,7 @@ public class MouseBlockerOverlay extends JFrame {
         constraints.anchor = GridBagConstraints.CENTER; // Center alignment
 
         panel.add(textField, constraints);
+
 
         this.add(panel);
 
