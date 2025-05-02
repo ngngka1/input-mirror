@@ -43,8 +43,14 @@ public class MouseController {
 
         int mousePressMask = (~prevMbMask) & mbMask;
         int mouseReleaseMask = prevMbMask & (prevMbMask ^ mbMask);
-        robot.mousePress(mousePressMask);
-        robot.mouseRelease(mouseReleaseMask);
+        try {
+            robot.mousePress(mousePressMask);
+            robot.mouseRelease(mouseReleaseMask);
+        } catch (IllegalArgumentException e) {
+            // this exception is thrown mostly because extended buttons (MB4 or more) is not enabled by java,
+            // if this app is migrated to an actual desktop app framework, an option to enable extended button will be
+            // added
+        }
         prevMbMask = mbMask;
     }
 
