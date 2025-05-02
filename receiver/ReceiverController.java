@@ -25,6 +25,7 @@ public class ReceiverController extends DeviceController {
             MinimumDelayReader lossyReader = new MinimumDelayReader(in);
             new Thread(lossyReader).start();
             setInputReader(lossyReader);
+            setClientSocket(clientSocket);
         } catch (IOException e) {
             throw new RuntimeException("Error trying to obtain the I/O stream, stopping connection");
         }
@@ -74,5 +75,16 @@ public class ReceiverController extends DeviceController {
         }
         System.out.println();
         System.out.println("Connection terminated.");
+    }
+
+    @Override
+    public void terminate() {
+        super.terminate();
+        try {
+            GlobalScreen.unregisterNativeHook();
+//            System.out.println("Listener terminated.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
