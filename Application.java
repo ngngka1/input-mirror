@@ -164,6 +164,7 @@ public class Application {
                             Socket clientSocket = connectionController.acceptConnection(devices.get(index));
                             if (clientSocket != null) {
                                 ReceiverController receiver = new ReceiverController(clientSocket);
+                                HotkeyManager.hook(receiver);
                                 receiver.start();
                             }
                             break;

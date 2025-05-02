@@ -90,7 +90,7 @@ public class SenderController extends DeviceController {
             }
             case RECEIVER_FLAG: {
                 if (showPrompt)
-                    System.out.println("Mouse input is now exclusively on receiver's device");
+                    System.out.println("Mouse input is now exclusively on receivner's device");
                 localInputBlocker.disableMouseInput();
                 break;
             }
@@ -176,7 +176,7 @@ public class SenderController extends DeviceController {
     @Override
     public void start() {
         System.out.println();
-        System.out.println("Start sending inputs to target device");
+        initFlags(true);
         String prevPoll = "";
         try {
             while (!isTerminated()) {
@@ -198,15 +198,19 @@ public class SenderController extends DeviceController {
         System.out.println("Connection terminated.");
     }
 
-    private void initFlags() {
-        setKeyboardFlag(BOTH_FLAG, false);
-        setMouseFlag(BOTH_FLAG, false);
+    public void initFlags(int defaultMouseFlag, int defaultKeyboardFlag, boolean showPrompt) {
+        setKeyboardFlag(defaultMouseFlag, false);
+        setMouseFlag(defaultKeyboardFlag, false);
+    }
+
+    public void initFlags(boolean showPrompt) {
+        initFlags(BOTH_FLAG, BOTH_FLAG, showPrompt);
     }
 
     @Override
     public void terminate() {
         super.terminate();
-        initFlags();
+        initFlags(false);
         try {
             GlobalScreen.unregisterNativeHook();
 //            System.out.println("Listener terminated.");
