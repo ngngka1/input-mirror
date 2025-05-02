@@ -80,20 +80,23 @@ public class SenderController extends DeviceController {
     }
 
     // synchronization is not necessary for these two flags
-    public void setMouseFlag(int mouseFlag) {
+    public void setMouseFlag(int mouseFlag, boolean showPrompt) {
         switch (mouseFlag) {
             case BOTH_FLAG: {
-                System.out.println("Mouse input is now on both device");
+                if (showPrompt)
+                    System.out.println("Mouse input is now on both device");
                 localInputBlocker.enableMouseInput();
                 break;
             }
             case RECEIVER_FLAG: {
-                System.out.println("Mouse input is now exclusively on receiver's device");
+                if (showPrompt)
+                    System.out.println("Mouse input is now exclusively on receiver's device");
                 localInputBlocker.disableMouseInput();
                 break;
             }
             case SENDER_FLAG: {
-                System.out.println("Mouse input is now exclusively on sender's device");
+                if (showPrompt)
+                    System.out.println("Mouse input is now exclusively on sender's device");
                 localInputBlocker.enableMouseInput();
                 break;
             }
@@ -105,20 +108,23 @@ public class SenderController extends DeviceController {
         return mouseFlag;
     }
 
-    public void setKeyboardFlag(int keyboardFlag) {
+    public void setKeyboardFlag(int keyboardFlag, boolean showPrompt) {
         switch (keyboardFlag) {
             case BOTH_FLAG: {
-                System.out.println("Keyboard input is now on both device");
+                if (showPrompt)
+                    System.out.println("Keyboard input is now on both device");
                 localInputBlocker.enableKeyboardInput();
                 break;
             }
             case RECEIVER_FLAG: {
-                System.out.println("Keyboard input is now exclusively on receiver's device (WIP, won't work if the local device refocus somewhere else)");
+                if (showPrompt)
+                    System.out.println("Keyboard input is now exclusively on receiver's device (WIP, won't work if the local device refocus somewhere else)");
                 localInputBlocker.disableKeyboardInput();
                 break;
             }
             case SENDER_FLAG: {
-                System.out.println("Keyboard input is now exclusively on sender's device");
+                if (showPrompt)
+                    System.out.println("Keyboard input is now exclusively on sender's device");
                 localInputBlocker.enableKeyboardInput();
                 break;
             }
@@ -193,8 +199,8 @@ public class SenderController extends DeviceController {
     }
 
     private void initFlags() {
-        setKeyboardFlag(BOTH_FLAG);
-        setMouseFlag(BOTH_FLAG);
+        setKeyboardFlag(BOTH_FLAG, false);
+        setMouseFlag(BOTH_FLAG, false);
     }
 
     @Override

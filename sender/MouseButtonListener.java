@@ -24,8 +24,14 @@ public class MouseButtonListener implements NativeMouseListener {
 
     }
 
+
     private void updateButtonMask(int button, boolean pressed) {
-        int mask = (1 << (button-1));
+        // brute forcing here because Java.awt.Robot has reversed mask for MB2 and MB3, compared to button mask
+        if (button == 2 || button == 3) {
+            button = 0b0001 ^ button; // 0011 becomes 0010 (3->2); 0010 becomes 0011 (2->3)
+        }
+
+        int mask = (1 << (4 - (button-1))); //
         if (pressed) {
             // Set the appropriate bit for the pressed button
             buttonMask |= mask; // Use OR to set the bit

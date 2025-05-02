@@ -30,6 +30,8 @@ public class MouseController {
         MouseController.scrollMouseByRotations(scrollRotations);
     }
 
+
+
     public static void controlMouseButtons(int mbMask) {
         // example:
         // prevMbMask (previous state) = 00101 (1 = key pressed, 0 = nothing/released)

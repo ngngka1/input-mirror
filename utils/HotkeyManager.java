@@ -60,9 +60,9 @@ public class HotkeyManager {
         if (controllerInstance instanceof SenderController) {
             SenderController x = ((SenderController) controllerInstance);
             if (hotkeyAction == HotkeyAction.TOGGLE_MOUSE) {
-                x.setMouseFlag((x.getMouseFlag() + 1) % 3);
+                x.setMouseFlag((x.getMouseFlag() + 1) % 3, true);
             } else if (hotkeyAction == HotkeyAction.TOGGLE_KEYBOARD) {
-                x.setKeyboardFlag((x.getKeyboardFlag() + 1) % 3);
+                x.setKeyboardFlag((x.getKeyboardFlag() + 1) % 3, true);
             }
         } else {
             ReceiverController x = ((ReceiverController) controllerInstance);
