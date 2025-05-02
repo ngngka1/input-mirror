@@ -36,7 +36,7 @@ public class ThreadedBufferedReader extends BackgroundTask implements Readable {
             } catch (IOException e) {
                 break;
             }
-            if (inputQueue.size() > 500) {
+            if (inputQueue.size() >= 500) {
                 inputQueue.clear();
             }
             inputQueue.add(input);
