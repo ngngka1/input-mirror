@@ -6,17 +6,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Queue;
+//import java.util.Queue;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 
 public class ThreadedBufferedReader extends BackgroundTask implements Readable {
 
-    private volatile Queue<String> inputQueue;
+    private volatile CircularFifoQueue<String> inputQueue;
     private final BufferedReader br;
 
     public ThreadedBufferedReader(BufferedReader br) {
         this.br = br;
-        inputQueue = new ArrayDeque<>();
+        inputQueue = new CircularFifoQueue<String>(500);
     }
 
     public ThreadedBufferedReader(InputStream inputStream) {
