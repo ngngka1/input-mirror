@@ -51,7 +51,7 @@ public class ThreadedBufferedReader extends BackgroundTask implements Readable {
     }
 
     public String clearAllReturnLast() {
-        String x = inputQueue.get(inputQueue.size());
+        String x = inputQueue.get(inputQueue.size() - 1);
         inputQueue.clear();
         return x;
     }
